@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nexterview.netlify.app/sitemap.xml
+Sitemap: https://nextralis.netlify.app/sitemap.xml

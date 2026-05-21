@@ -5,7 +5,7 @@
 const CONFIG = {
   // Backend API Base URL
   // API_BASE_URL: 'http://localhost:5000/api',
-  API_BASE_URL: 'https://nexterview-backend.onrender.com/api',
+  API_BASE_URL: 'https://nextralis-backend.onrender.com/api',
 
   // API Endpoints
   ENDPOINTS: {
