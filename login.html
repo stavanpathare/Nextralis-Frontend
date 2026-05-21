@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>AI Interview</h1>
+          <p>Welcome back! Let's continue your journey</p>
+        </div>
+
+        <form class="auth-form" id="login-form">
+          <!-- Error Message -->
+          <div id="error-message" class="error-message hidden"></div>
+
+          <!-- Success Message -->
+          <div id="success-message" class="success-message hidden"></div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="form-input-wrapper">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                autocomplete="email"
+              />
+              <span class="form-input-icon">✉️</span>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="form-input-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+              />
+              <span class="form-input-icon">🔐</span>
+            </div>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-actions">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="remember-me" name="remember-me" />
+              <label for="remember-me">Remember me</label>
+            </div>
+            <a href="#">Forgot password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary auth-submit" id="btn-login">Sign In</button>
+
+          <!-- Auth Links -->
+          <div class="auth-links">
+            <p>Don't have an account? <a href="register.html">Sign up here</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+      const loginRedirectTarget = (() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect');
+        if (redirect && /^[a-z0-9\-_/]+\.html$/i.test(redirect)) {
+          return redirect;
+        }
+        return 'dashboard.html';
+      })();
+
+      class LoginPage {
+        constructor() {
+          this.form = document.getElementById('login-form');
+          this.init();
+        }
+
+        async init() {
+          await this.waitForAuthManager();
+          this.setupEventListeners();
+        }
+
+        waitForAuthManager(timeoutMs = 3000) {
+          return new Promise((resolve) => {
+            if (typeof authManager !== 'undefined' && authManager) return resolve();
+            const start = Date.now();
+            const iv = setInterval(() => {
+              if (typeof authManager !== 'undefined' && authManager) {
+                clearInterval(iv);
+                return resolve();
+              }
+              if (Date.now() - start > timeoutMs) {
+                clearInterval(iv);
+                console.warn('authManager not available after timeout; proceeding with limited validation.');
+                return resolve();
+              }
+            }, 50);
+          });
+        }
+
+        setupEventListeners() {
+          this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        }
+
+        async handleSubmit(e) {
+          e.preventDefault();
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          // Validate (use authManager if available)
+          const validator = (typeof authManager !== 'undefined' && authManager && typeof authManager.validateLoginForm === 'function')
+            ? authManager.validateLoginForm.bind(authManager)
+            : () => ({ isValid: true, errors: {} });
+          const validation = validator(email, password);
+          if (!validation.isValid) {
+            this.showError(Object.values(validation.errors).join(', '));
+            return;
+          }
+
+          // Login
+          UIHelper.setButtonLoading(document.getElementById('btn-login'), true);
+
+          if (typeof authManager === 'undefined' || !authManager || typeof authManager.login !== 'function') {
+            this.showError('Authentication service is unavailable. Please try again later.');
+            UIHelper.setButtonLoading(document.getElementById('btn-login'), false);
+            return;
+          }
+
+          const result = await authManager.login(email, password);
+
+          UIHelper.setButtonLoading(document.getElementById('btn-login'), false);
+
+          if (result.success) {
+            this.showSuccess('Login successful! Redirecting...');
+            setTimeout(() => {
+              window.location.href = loginRedirectTarget;
+            }, 1500);
+          } else {
+            this.showError(result.error);
+          }
+        }
+
+        showError(message) {
+          const errorDiv = document.getElementById('error-message');
+          errorDiv.textContent = message;
+          errorDiv.classList.remove('hidden');
+          setTimeout(() => {
+            errorDiv.classList.add('hidden');
+          }, 5000);
+        }
+
+        showSuccess(message) {
+          const successDiv = document.getElementById('success-message');
+          successDiv.textContent = message;
+          successDiv.classList.remove('hidden');
+        }
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          new LoginPage();
+        });
+      } else {
+        new LoginPage();
+      }
+    </script>
+  </body>
+</html>

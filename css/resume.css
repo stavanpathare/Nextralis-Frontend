@@ -1,0 +1,490 @@
+/* ============================================
+   RESUME ANALYZER STYLES
+   ============================================ */
+
+.resume-container {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+}
+
+.resume-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  animation: slide-up 0.6s ease-out;
+}
+
+.resume-header h1 {
+  font-size: var(--font-4xl);
+  margin-bottom: var(--spacing-md);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.resume-header p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-lg);
+}
+
+/* Upload Section */
+
+.upload-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Upload Box */
+
+.upload-box {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-3xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  background: rgba(26, 31, 58, 0.3);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-box:hover {
+  border-color: var(--color-neon-blue);
+  background: rgba(0, 212, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.upload-box.drag-over {
+  border-color: var(--color-neon-blue);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+  transform: scale(1.02);
+}
+
+.upload-box-icon {
+  font-size: 60px;
+  margin-bottom: var(--spacing-lg);
+  animation: float 3s ease-in-out infinite;
+}
+
+.upload-box-text {
+  margin-bottom: var(--spacing-md);
+}
+
+.upload-box-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.upload-box-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+.upload-box input[type='file'] {
+  display: none;
+}
+
+.upload-box .btn {
+  margin-top: var(--spacing-lg);
+}
+
+/* Upload Progress */
+
+.upload-progress {
+  margin-top: var(--spacing-lg);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  width: 0%;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Analysis Panel */
+
+.analysis-panel {
+  background: rgba(26, 31, 58, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.analysis-item {
+  padding: var(--spacing-lg);
+  background: rgba(26, 31, 58, 0.4);
+  border-left: 3px solid var(--color-neon-blue);
+  border-radius: var(--radius-md);
+}
+
+.analysis-item-title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.analysis-item-value {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-neon-blue);
+}
+
+/* Analysis Results */
+
+.analysis-results {
+  animation: fade-in 0.6s ease-out;
+}
+
+.analysis-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Score Card */
+
+.score-card {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.score-card-value {
+  font-size: var(--font-5xl);
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-md);
+}
+
+.score-card-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.score-card-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.score-card-progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+}
+
+/* Report Card */
+
+.report-card {
+  background: rgba(26, 31, 58, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.report-card-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.report-card-icon {
+  font-size: var(--font-2xl);
+}
+
+.report-items {
+  list-style: none;
+}
+
+.report-item {
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.report-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.report-item-icon {
+  font-size: var(--font-xl);
+  min-width: 24px;
+  margin-top: 2px;
+}
+
+.report-item-content {
+  flex: 1;
+}
+
+.report-item-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.report-item-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+/* Circular Progress */
+
+.circular-progress {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto var(--spacing-lg);
+}
+
+.circular-progress svg {
+  transform: rotate(-90deg);
+}
+
+.circular-progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 6;
+}
+
+.circular-progress-fill {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 471;
+  stroke-dashoffset: 471;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.circular-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.circular-progress-value {
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--color-neon-blue);
+}
+
+.circular-progress-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Skills & Suggestions */
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.skill-tag {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--color-neon-blue);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  text-align: center;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.skill-tag:hover {
+  background: rgba(0, 212, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.skill-tag.missing {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: var(--color-neon-purple);
+}
+
+/* Suggestion Cards */
+
+.suggestions-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.suggestion-card {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-normal);
+}
+
+.suggestion-card:hover {
+  border-color: var(--color-neon-blue);
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+  transform: translateY(-4px);
+}
+
+.suggestion-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.suggestion-title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.suggestion-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.suggestion-action {
+  color: var(--color-neon-blue);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.suggestion-action:hover {
+  color: var(--color-neon-cyan);
+}
+
+/* Empty State */
+
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-3xl);
+}
+
+.empty-state-icon {
+  font-size: 80px;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: var(--font-2xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.empty-state-description {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Responsive Design */
+
+@media (max-width: 1024px) {
+  .upload-section {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-results-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .resume-header h1 {
+    font-size: var(--font-3xl);
+  }
+
+  .upload-box {
+    padding: var(--spacing-xl);
+    min-height: 200px;
+  }
+
+  .analysis-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .suggestions-container {
+    grid-template-columns: 1fr;
+  }
+
+  .score-card-value {
+    font-size: var(--font-4xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .resume-container {
+    padding: var(--spacing-lg);
+  }
+
+  .upload-box-icon {
+    font-size: 40px;
+  }
+
+  .report-item {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      .profile-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: var(--spacing-2xl) var(--spacing-xl);
+      }
+
+      .profile-header {
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .profile-header h1 {
+        font-size: var(--font-4xl);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .profile-main {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: var(--spacing-2xl);
+      }
+
+      .profile-sidebar {
+        background: rgba(26, 31, 58, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+      }
+
+      .profile-card {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 40px;
+        font-weight: 700;
+        margin: 0 auto var(--spacing-lg);
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        overflow: hidden;
+      }
+
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .profile-card h2 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .profile-card p {
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .badge {
+        display: inline-block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: var(--gradient-primary);
+        color: white;
+        border-radius: var(--radius-full);
+        font-size: var(--font-sm);
+        font-weight: 600;
+      }
+
+      .profile-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+        padding: var(--spacing-xl);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-md);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: var(--font-2xl);
+        font-weight: 700;
+        color: var(--color-neon-blue);
+      }
+
+      .stat-label {
+        font-size: var(--font-sm);
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-xs);
+      }
+
+      .profile-content {
+        background: rgba(26, 31, 58, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+      }
+
+      .profile-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .profile-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .profile-section-title {
+        font-size: var(--font-lg);
+        font-weight: 700;
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      #profile-form input,
+      #profile-form textarea {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      #profile-form input:disabled,
+      #profile-form textarea:disabled {
+        background: rgba(255, 255, 255, 0.02);
+        cursor: not-allowed;
+      }
+
+      .profile-actions {
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+      }
+
+      .profile-actions .btn {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .profile-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: var(--spacing-xl) 0;
+      }
+
+      @media (max-width: 768px) {
+        .profile-main {
+          grid-template-columns: 1fr;
+        }
+
+        .profile-header h1 {
+          font-size: var(--font-3xl);
+        }
+
+        .profile-stats {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .profile-actions {
+          flex-direction: column;
+        }
+
+        .profile-actions .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="profile-container">
+      <!-- Header -->
+      <div class="profile-header">
+        <h1>My Profile</h1>
+        <p>Manage your personal information and preferences</p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="profile-main">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+          <div class="profile-card">
+            <div class="profile-avatar" id="user-avatar-large">...</div>
+            <h2>Loading...</h2>
+            <p></p>
+            <span class="badge">Free Plan</span>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-value">0</div>
+              <div class="stat-label">Resumes</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">0</div>
+              <div class="stat-label">Interviews</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">0%</div>
+              <div class="stat-label">Avg Score</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">N/A</div>
+              <div class="stat-label">Member Since</div>
+            </div>
+          </div>
+
+          <div class="profile-divider"></div>
+
+          <div class="profile-actions" style="flex-direction: column;">
+            <button class="btn btn-primary" id="btn-change-password">Change Password</button>
+            <button class="btn btn-ghost" id="btn-logout">Logout</button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="profile-content">
+          <!-- Personal Info Section -->
+          <div class="profile-section">
+            <div class="profile-section-title">Personal Information</div>
+            <form id="profile-form">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="profile-name" name="name" disabled />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="profile-email" name="email" disabled />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Bio</label>
+                <textarea id="profile-bio" name="bio" placeholder="Tell us about yourself..." disabled></textarea>
+              </div>
+
+              <div class="profile-actions">
+                <button type="button" class="btn btn-primary" id="btn-edit-profile">Edit Profile</button>
+                <button type="button" class="btn btn-secondary" id="btn-save-profile" style="display: none;">
+                  Save Changes
+                </button>
+                <button type="button" class="btn btn-ghost" id="btn-cancel-profile" style="display: none;">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Account Section -->
+          <div class="profile-section">
+            <div class="profile-section-title">Account Settings</div>
+
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="margin-bottom: var(--spacing-sm); font-weight: 600;">Email Notifications</div>
+              <div class="checkbox-wrapper">
+                <input type="checkbox" id="notify-email" checked />
+                <label for="notify-email">Receive email updates about your progress</label>
+              </div>
+            </div>
+
+            <div>
+              <div style="margin-bottom: var(--spacing-sm); font-weight: 600;">Data & Privacy</div>
+              <div style="font-size: var(--font-sm); color: var(--color-text-secondary);">
+                <p>
+                  <a href="#" style="color: var(--color-neon-blue);">Download your data</a> • 
+                  <a href="#" style="color: var(--color-neon-blue);">Privacy policy</a> • 
+                  <a href="#" style="color: #fca5a5);">Delete account</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/profile.js"></script>
+  </body>
+</html>

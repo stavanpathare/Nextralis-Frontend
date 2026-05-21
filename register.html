@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>AI Interview</h1>
+          <p>Start your journey to acing interviews</p>
+        </div>
+
+        <form class="auth-form" id="register-form">
+          <!-- Error Message -->
+          <div id="error-message" class="error-message hidden"></div>
+
+          <!-- Success Message -->
+          <div id="success-message" class="success-message hidden"></div>
+
+          <!-- Name -->
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="form-input-wrapper">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                required
+              />
+              <span class="form-input-icon">👤</span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="form-input-wrapper">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                autocomplete="email"
+              />
+              <span class="form-input-icon">✉️</span>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="form-input-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a strong password"
+                required
+                autocomplete="new-password"
+              />
+              <span class="form-input-icon">🔐</span>
+            </div>
+            <div class="password-strength" id="password-strength"></div>
+            <div class="password-strength-text" id="password-strength-text"></div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <div class="form-input-wrapper">
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                placeholder="Confirm your password"
+                required
+                autocomplete="new-password"
+              />
+              <span class="form-input-icon">✓</span>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="form-group">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="terms" name="terms" required />
+              <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary auth-submit" id="btn-register">Create Account</button>
+
+          <!-- Auth Links -->
+          <div class="auth-links">
+            <p>Already have an account? <a href="login.html">Sign in here</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+      const registerRedirectTarget = (() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect');
+        if (redirect && /^[a-z0-9\-_/]+\.html$/i.test(redirect)) {
+          return redirect;
+        }
+        return 'dashboard.html';
+      })();
+
+      class RegisterPage {
+        constructor() {
+          this.form = document.getElementById('register-form');
+          this.passwordInput = document.getElementById('password');
+          this.init();
+        }
+
+        async init() {
+          await this.waitForAuthManager();
+          this.setupEventListeners();
+        }
+
+        waitForAuthManager(timeoutMs = 3000) {
+          return new Promise((resolve) => {
+            if (typeof authManager !== 'undefined' && authManager) return resolve();
+            const start = Date.now();
+            const iv = setInterval(() => {
+              if (typeof authManager !== 'undefined' && authManager) {
+                clearInterval(iv);
+                return resolve();
+              }
+              if (Date.now() - start > timeoutMs) {
+                clearInterval(iv);
+                console.warn('authManager not available after timeout; continuing with limited features.');
+                return resolve();
+              }
+            }, 50);
+          });
+        }
+
+        setupEventListeners() {
+          this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+          this.passwordInput.addEventListener('input', () => this.updatePasswordStrength());
+        }
+
+        updatePasswordStrength() {
+          const password = this.passwordInput.value;
+          const strength = (typeof authManager !== 'undefined' && authManager && typeof authManager.validatePasswordStrength === 'function')
+            ? authManager.validatePasswordStrength(password)
+            : { level: 'weak' };
+
+          const strengthContainer = document.getElementById('password-strength');
+          const strengthText = document.getElementById('password-strength-text');
+
+          // Clear previous
+          strengthContainer.innerHTML = '';
+
+          // Create strength bars
+          for (let i = 0; i < 5; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'password-strength-bar';
+
+            if (strength.level === 'weak' && i < 1) {
+              bar.classList.add('weak');
+            } else if (strength.level === 'medium' && i < 3) {
+              bar.classList.add('medium');
+            } else if (strength.level === 'strong' && i < 5) {
+              bar.classList.add('strong');
+            }
+
+            strengthContainer.appendChild(bar);
+          }
+
+          // Update text
+          strengthText.textContent = `Strength: ${strength.level.toUpperCase()}`;
+          strengthText.className = `password-strength-text ${strength.level}`;
+        }
+
+        async handleSubmit(e) {
+          e.preventDefault();
+
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const confirmPassword = document.getElementById('confirm-password').value;
+          const terms = document.getElementById('terms').checked;
+
+          // Validate
+          const validator = (typeof authManager !== 'undefined' && authManager && typeof authManager.validateRegisterForm === 'function')
+            ? authManager.validateRegisterForm.bind(authManager)
+            : () => ({ isValid: true, errors: {} });
+          const validation = validator(name, email, password, confirmPassword);
+          if (!validation.isValid) {
+            this.showError(Object.values(validation.errors).join(', '));
+            return;
+          }
+
+          if (!terms) {
+            this.showError('Please agree to the Terms of Service');
+            return;
+          }
+
+          // Register
+          UIHelper.setButtonLoading(document.getElementById('btn-register'), true);
+
+          if (typeof authManager === 'undefined' || !authManager || typeof authManager.register !== 'function') {
+            this.showError('Authentication service is unavailable. Please try again later.');
+            UIHelper.setButtonLoading(document.getElementById('btn-register'), false);
+            return;
+          }
+
+          const result = await authManager.register(name, email, password);
+
+          UIHelper.setButtonLoading(document.getElementById('btn-register'), false);
+
+          if (result.success) {
+            this.showSuccess('Account created successfully! Redirecting...');
+            setTimeout(() => {
+              window.location.href = registerRedirectTarget;
+            }, 1500);
+          } else {
+            this.showError(result.error);
+          }
+        }
+
+        showError(message) {
+          const errorDiv = document.getElementById('error-message');
+          errorDiv.textContent = message;
+          errorDiv.classList.remove('hidden');
+          setTimeout(() => {
+            errorDiv.classList.add('hidden');
+          }, 5000);
+        }
+
+        showSuccess(message) {
+          const successDiv = document.getElementById('success-message');
+          successDiv.textContent = message;
+          successDiv.classList.remove('hidden');
+        }
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          new RegisterPage();
+        });
+      } else {
+        new RegisterPage();
+      }
+    </script>
+  </body>
+</html>

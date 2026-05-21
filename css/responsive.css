@@ -1,0 +1,777 @@
+/* ============================================
+   RESPONSIVE DESIGN TWEAKS
+   ============================================ */
+
+/* DESKTOP - Large Screens */
+
+@media (min-width: 1920px) {
+  :root {
+    --font-base: 1.125rem;
+    --font-lg: 1.25rem;
+    --font-xl: 1.5rem;
+  }
+
+  .container {
+    max-width: 1400px;
+  }
+}
+
+/* TABLET LANDSCAPE - 1024px to 1366px */
+
+@media (max-width: 1366px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* TABLET - 768px to 1024px */
+
+@media (max-width: 1024px) {
+  :root {
+    --spacing-2xl: 2.5rem;
+    --spacing-3xl: 3rem;
+  }
+
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+
+  h1 {
+    font-size: var(--font-4xl);
+  }
+
+  h2 {
+    font-size: var(--font-3xl);
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-sm);
+  }
+
+  .btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-base);
+  }
+
+  /* Dashboard */
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-lg);
+    justify-content: space-between;
+  }
+
+  .sidebar-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav-item {
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav-link {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-left: none;
+  }
+
+  .dashboard-main {
+    grid-column: 1;
+    padding: var(--spacing-xl);
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .navbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .navbar-search {
+    width: 100%;
+  }
+
+  /* Forms */
+  .auth-form {
+    max-width: 100%;
+  }
+
+  .upload-section {
+    grid-template-columns: 1fr;
+  }
+
+  .interview-setup {
+    grid-template-columns: 1fr;
+  }
+
+  .interview-live {
+    grid-template-columns: 1fr;
+  }
+
+  .interview-sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .microphone-widget {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .progress-widget {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .previous-questions {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  /* Grid adjustments */
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Suggestions */
+  .suggestions-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Skills */
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
+
+/* PHONE LANDSCAPE - 600px to 768px */
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 1.25rem;
+    --spacing-xl: 1.5rem;
+    --spacing-2xl: 2rem;
+  }
+
+  body {
+    font-size: var(--font-base);
+  }
+
+  h1 {
+    font-size: var(--font-3xl);
+  }
+
+  h2 {
+    font-size: var(--font-2xl);
+  }
+
+  h3 {
+    font-size: var(--font-xl);
+  }
+
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  /* Buttons */
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-sm);
+  }
+
+  .btn-lg {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-base);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-x: auto;
+    max-height: auto;
+  }
+
+  .sidebar-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  /* Navbar */
+  .navbar {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .navbar-title {
+    font-size: var(--font-xl);
+  }
+
+  .navbar-search {
+    width: 100%;
+  }
+
+  .navbar-user {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    padding-left: 0;
+    padding-top: var(--spacing-md);
+  }
+
+  /* Hero */
+  .hero-title {
+    font-size: var(--font-3xl);
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-lg);
+  }
+
+  /* Cards */
+  .glass-card {
+    padding: var(--spacing-lg);
+  }
+
+  .welcome-card {
+    grid-column: span 1;
+    padding: var(--spacing-lg);
+    min-height: 150px;
+  }
+
+  /* Tables */
+  .history-table th,
+  .history-table td {
+    padding: var(--spacing-md);
+    font-size: var(--font-sm);
+  }
+
+  .table-status {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-xs);
+  }
+
+  /* Forms */
+  .auth-form {
+    padding: var(--spacing-lg);
+  }
+
+  .auth-header h1 {
+    font-size: var(--font-3xl);
+  }
+
+  .form-label {
+    font-size: var(--font-sm);
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  textarea,
+  select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-base);
+  }
+
+  .password-strength {
+    height: 3px;
+  }
+
+  /* Upload */
+  .upload-box {
+    padding: var(--spacing-xl);
+    min-height: 200px;
+  }
+
+  .upload-box-icon {
+    font-size: 40px;
+  }
+
+  /* Score Cards */
+  .score-card {
+    padding: var(--spacing-lg);
+  }
+
+  .score-card-value {
+    font-size: var(--font-4xl);
+  }
+
+  /* Interview */
+  .interview-question-text {
+    font-size: var(--font-xl);
+  }
+
+  .microphone-icon {
+    font-size: 40px;
+  }
+
+  .microphone-widget {
+    padding: var(--spacing-lg);
+  }
+
+  .waveform {
+    height: 50px;
+  }
+
+  /* Progress Grid */
+  .progress-questions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Results Grid */
+  .interview-results {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .analysis-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* History Table Hidden on Mobile */
+  .history-table {
+    font-size: var(--font-sm);
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+}
+
+/* PHONE PORTRAIT - 480px to 600px */
+
+@media (max-width: 600px) {
+  :root {
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+  }
+
+  h1 {
+    font-size: var(--font-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-xl);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--font-2xl);
+  }
+
+  .section-title {
+    font-size: var(--font-lg);
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .action-card {
+    padding: var(--spacing-lg);
+  }
+
+  /* Grid */
+  .grid-3,
+  .grid-4,
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Analysis Results */
+  .analysis-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Interview Results */
+  .interview-results {
+    grid-template-columns: 1fr;
+  }
+
+  /* Skills Grid */
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Suggestions */
+  .suggestions-container {
+    grid-template-columns: 1fr;
+  }
+
+  .suggestion-card {
+    padding: var(--spacing-md);
+  }
+
+  /* Report Items */
+  .report-item {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .report-item-icon {
+    margin-top: 0;
+  }
+
+  /* Progress */
+  .progress-questions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Social Buttons */
+  .social-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  /* Buttons */
+  .welcome-card-actions {
+    flex-direction: column;
+  }
+
+  .welcome-card .btn {
+    width: 100%;
+  }
+
+  .interview-controls {
+    flex-direction: column;
+  }
+
+  .btn-interview,
+  .btn-mute,
+  .btn-stop {
+    width: 100%;
+  }
+}
+
+/* SMALL PHONE - Under 480px */
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+    --spacing-2xl: 1.5rem;
+  }
+
+  body {
+    font-size: var(--font-sm);
+  }
+
+  h1 {
+    font-size: var(--font-xl);
+  }
+
+  h2 {
+    font-size: var(--font-lg);
+  }
+
+  h3 {
+    font-size: var(--font-base);
+  }
+
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  /* Dashboard */
+  .dashboard-main {
+    padding: var(--spacing-md);
+  }
+
+  .navbar {
+    padding: var(--spacing-md);
+  }
+
+  .navbar-title {
+    font-size: var(--font-lg);
+  }
+
+  .dashboard-grid {
+    gap: var(--spacing-md);
+    grid-template-columns: 1fr;
+  }
+
+  .stats-card {
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .stats-icon {
+    width: 50px;
+    height: 50px;
+    font-size: var(--font-xl);
+  }
+
+  .stats-value {
+    font-size: var(--font-2xl);
+  }
+
+  /* Auth */
+  .auth-container {
+    padding: var(--spacing-md);
+  }
+
+  .auth-card {
+    max-width: 100%;
+  }
+
+  .auth-form {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+  }
+
+  .auth-header h1 {
+    font-size: var(--font-2xl);
+  }
+
+  /* Upload */
+  .resume-container {
+    padding: var(--spacing-lg);
+  }
+
+  .upload-box {
+    padding: var(--spacing-lg);
+    min-height: 150px;
+  }
+
+  .upload-box-icon {
+    font-size: 32px;
+  }
+
+  .score-card {
+    padding: var(--spacing-md);
+  }
+
+  .score-card-value {
+    font-size: var(--font-3xl);
+  }
+
+  /* Interview */
+  .interview-container {
+    padding: var(--spacing-lg);
+  }
+
+  .interview-main {
+    padding: var(--spacing-lg);
+    min-height: 200px;
+  }
+
+  .interview-question-text {
+    font-size: var(--font-base);
+  }
+
+  .microphone-widget {
+    padding: var(--spacing-md);
+  }
+
+  .microphone-icon {
+    font-size: 32px;
+  }
+
+  .waveform {
+    height: 40px;
+    gap: var(--spacing-xs);
+  }
+
+  .waveform-bar {
+    width: 3px;
+  }
+
+  .progress-questions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  /* Tables */
+  .history-table {
+    font-size: var(--font-xs);
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+
+  /* Forms */
+  .form-label {
+    font-size: var(--font-xs);
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  textarea,
+  select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-sm);
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-xs);
+  }
+
+  .btn-lg {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-sm);
+  }
+
+  /* Skills Grid */
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-tag {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-xs);
+  }
+
+  /* Report */
+  .report-items {
+    font-size: var(--font-sm);
+  }
+
+  .report-item-icon {
+    font-size: var(--font-lg);
+  }
+
+  /* Feedback */
+  .feedback-items {
+    gap: var(--spacing-sm);
+  }
+
+  .feedback-item {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .feedback-item-title {
+    font-size: var(--font-sm);
+  }
+
+  .feedback-item-description {
+    font-size: var(--font-xs);
+  }
+
+  /* Previous Questions */
+  .previous-questions {
+    max-height: 200px;
+  }
+
+  .previous-question-item {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* Utilities */
+  .mt-lg {
+    margin-top: var(--spacing-lg);
+  }
+
+  .mb-lg {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .px-lg {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+
+  .py-lg {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+  }
+
+  /* Hidden on very small screens */
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* Landscape mode adjustments */
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero-section {
+    min-height: auto;
+  }
+
+  .navbar {
+    padding: var(--spacing-sm);
+  }
+
+  .auth-form {
+    padding: var(--spacing-lg);
+  }
+
+  .interview-main {
+    min-height: 300px;
+  }
+
+  .microphone-widget {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Print Styles */
+
+@media print {
+  .navbar,
+  .sidebar,
+  .btn-upload,
+  .interview-controls,
+  .upload-box {
+    display: none;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .glass-card {
+    background: white;
+    border: 1px solid #ddd;
+  }
+
+  .report-card {
+    page-break-inside: avoid;
+  }
+}

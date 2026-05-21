@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Interview - Master Your Next Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      /* Landing Page Specific Styles */
+
+      .navbar-landing {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: rgba(10, 14, 39, 0.7);
+        backdrop-filter: blur(var(--blur-md));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: var(--spacing-md) var(--spacing-xl);
+      }
+
+      .navbar-landing-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .navbar-logo {
+        font-size: var(--font-2xl);
+        font-weight: 800;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .navbar-links {
+        display: flex;
+        gap: var(--spacing-xl);
+        align-items: center;
+        list-style: none;
+      }
+
+      .navbar-links a {
+        color: var(--color-text-secondary);
+        transition: color var(--transition-fast);
+      }
+
+      .navbar-links a:hover {
+        color: var(--color-neon-blue);
+      }
+
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        margin-top: 70px;
+        padding: var(--spacing-2xl) var(--spacing-xl);
+      }
+
+      .hero-background {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .hero-particle {
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .hero-particle-1 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+        top: -200px;
+        left: -200px;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .hero-particle-2 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
+        bottom: -150px;
+        right: -150px;
+        animation: float 10s ease-in-out infinite reverse;
+      }
+
+      .hero-particle-3 {
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+        top: 50%;
+        right: 10%;
+        animation: float 12s ease-in-out infinite;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 800px;
+        animation: slide-up 0.8s ease-out;
+      }
+
+      .hero-title {
+        font-size: var(--font-5xl);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-lg);
+        background: linear-gradient(135deg, #a855f7 0%, #00d4ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: var(--font-lg);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-2xl);
+        line-height: 1.6;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Features Section */
+
+      .features-section {
+        padding: var(--spacing-3xl) var(--spacing-xl);
+        background: rgba(26, 31, 58, 0.3);
+      }
+
+      .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .section-header h2 {
+        font-size: var(--font-4xl);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .section-header p {
+        font-size: var(--font-lg);
+        color: var(--color-text-secondary);
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-xl);
+      }
+
+      .feature-card {
+        background: linear-gradient(135deg, rgba(26, 31, 58, 0.8) 0%, rgba(26, 31, 58, 0.4) 100%);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        text-align: center;
+        transition: all var(--transition-normal);
+      }
+
+      .feature-card:hover {
+        border-color: var(--color-neon-blue);
+        box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+        transform: translateY(-8px);
+      }
+
+      .feature-icon {
+        font-size: 60px;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .feature-title {
+        font-size: var(--font-xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .feature-description {
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .feature-card .btn {
+        width: 100%;
+      }
+
+      /* How It Works */
+
+      .how-section {
+        padding: var(--spacing-3xl) var(--spacing-xl);
+      }
+
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-xl);
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .step-card {
+        text-align: center;
+        position: relative;
+      }
+
+      .step-number {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-2xl);
+        font-weight: 700;
+        margin: 0 auto var(--spacing-lg);
+      }
+
+      .step-title {
+        font-size: var(--font-xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .step-description {
+        color: var(--color-text-secondary);
+      }
+
+      .step-card::after {
+        content: '→';
+        position: absolute;
+        right: -40px;
+        top: 20px;
+        font-size: var(--font-2xl);
+        color: var(--color-neon-blue);
+      }
+
+      .step-card:last-child::after {
+        display: none;
+      }
+
+      /* CTA Section */
+
+      .cta-section {
+        padding: var(--spacing-3xl) var(--spacing-xl);
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+        border-top: 1px solid rgba(168, 85, 247, 0.2);
+        border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+      }
+
+      .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .cta-title {
+        font-size: var(--font-3xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .cta-description {
+        font-size: var(--font-lg);
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      /* Footer */
+
+      .footer {
+        padding: var(--spacing-2xl) var(--spacing-xl);
+        background: rgba(10, 14, 39, 0.5);
+        border-top: 1px solid var(--color-border);
+        text-align: center;
+        color: var(--color-text-secondary);
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-lg);
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: var(--color-neon-blue);
+        transition: color var(--transition-fast);
+      }
+
+      .footer-links a:hover {
+        color: var(--color-neon-cyan);
+      }
+
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: var(--font-3xl);
+        }
+
+        .hero-subtitle {
+          font-size: var(--font-base);
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+        }
+
+        .hero-buttons .btn {
+          width: 100%;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .step-card::after {
+          display: none;
+        }
+
+        .navbar-links {
+          gap: var(--spacing-md);
+          font-size: var(--font-sm);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-section {
+          padding: var(--spacing-lg);
+        }
+
+        .hero-title {
+          font-size: var(--font-2xl);
+        }
+
+        .navbar-links {
+          gap: var(--spacing-sm);
+        }
+
+        .section-header h2 {
+          font-size: var(--font-2xl);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar-landing">
+      <div class="navbar-landing-content">
+        <div class="navbar-logo">AI Interview</div>
+        <ul class="navbar-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+      <div class="hero-background">
+        <div class="hero-particle hero-particle-1"></div>
+        <div class="hero-particle hero-particle-2"></div>
+        <div class="hero-particle hero-particle-3"></div>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="hero-title">Ace Your Next Interview with AI</h1>
+        <p class="hero-subtitle">
+          AI-powered resume analysis and mock interviews for developers and job seekers. Get instant feedback, improve
+          your skills, and land your dream job.
+        </p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary btn-lg" onclick="window.location.href='register.html'">Try Now</button>
+          <button class="btn btn-secondary btn-lg" onclick="document.getElementById('features').scrollIntoView(true)">
+            Explore Features
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+      <div class="features-container">
+        <div class="section-header">
+          <h2>Powerful Features</h2>
+          <p>Everything you need to prepare for your interview</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Resume Analyzer -->
+          <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3 class="feature-title">Resume Analyzer</h3>
+            <p class="feature-description">
+              Upload your resume and get ATS score, missing skills, and AI-powered improvement suggestions.
+            </p>
+            <button class="btn btn-primary" onclick="window.location.href='login.html?redirect=resume-analysis.html'">
+              Analyze Resume
+            </button>
+          </div>
+
+          <!-- Voice Interview -->
+          <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <h3 class="feature-title">Voice Interview</h3>
+            <p class="feature-description">
+              Practice AI-powered mock interviews with real-time voice interaction and instant feedback.
+            </p>
+            <button class="btn btn-primary" onclick="window.location.href='login.html?redirect=voice-interview.html'">
+              Start Interview
+            </button>
+          </div>
+
+          <!-- Video Interview (Coming Soon) -->
+          <div class="feature-card">
+            <div class="feature-icon">🎥</div>
+            <h3 class="feature-title">Video Interview</h3>
+            <p class="feature-description">Coming soon - Video recording and analysis for your interview practice.</p>
+            <button class="btn btn-ghost" disabled>Coming Soon</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Simple 3-step process to ace your interviews</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Create Account</h3>
+          <p class="step-description">Sign up and set up your profile in minutes</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Upload & Analyze</h3>
+          <p class="step-description">Upload your resume or start a mock interview</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Get Feedback</h3>
+          <p class="step-description">Receive AI-powered feedback and improve</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to Land Your Dream Job?</h2>
+        <p class="cta-description">Join thousands of successful job seekers who've already improved their interview skills.</p>
+        <button class="btn btn-primary btn-lg" onclick="window.location.href='register.html'">Get Started Free</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Twitter</a>
+          <a href="#">LinkedIn</a>
+        </div>
+        <p>&copy; 2026 AI Interview. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

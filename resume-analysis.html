@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Analyzer - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/resume.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body class="resume-container">
+    <!-- Header -->
+    <div class="resume-header">
+      <h1>Resume Analyzer</h1>
+      <p>Upload your resume and get detailed ATS analysis and improvement suggestions</p>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+      <!-- Upload Box -->
+      <div class="upload-box" id="upload-box">
+        <div class="upload-box-icon">📤</div>
+        <div class="upload-box-text">
+          <div class="upload-box-title">Drag & drop your resume here</div>
+          <div class="upload-box-description">or click to browse (PDF, DOCX - max 5MB)</div>
+        </div>
+        <button type="button" class="btn btn-secondary">Choose File</button>
+        <input type="file" id="resume-file" accept=".pdf,.doc,.docx" style="display: none" />
+      </div>
+
+      <!-- Analysis Panel -->
+      <div class="analysis-panel">
+        <div class="analysis-item">
+          <div class="analysis-item-title">Upload Status</div>
+          <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
+            Ready to upload
+          </div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-title">File Type Accepted</div>
+          <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
+            PDF or DOCX
+          </div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-title">Max File Size</div>
+          <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
+            5 MB
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analysis Results -->
+    <div class="analysis-results"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/resume.js"></script>
+  </body>
+</html>

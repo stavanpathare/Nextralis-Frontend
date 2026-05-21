@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Interview - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/interview.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <!-- Interview Setup Section -->
+    <div id="interview-setup" class="interview-container">
+      <div class="interview-header">
+        <h1>AI-Powered Interview Practice</h1>
+        <p>Customize your interview settings and get started</p>
+      </div>
+
+      <div class="interview-setup">
+        <!-- Form -->
+        <div class="setup-form">
+          <h2 class="setup-title">Interview Settings</h2>
+
+          <div class="form-group">
+            <label class="form-label">Job Role</label>
+            <select id="job-role" required>
+              <option value="">Select a job role</option>
+              <option value="Frontend Developer">Frontend Developer</option>
+              <option value="Backend Developer">Backend Developer</option>
+              <option value="Full Stack Developer">Full Stack Developer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="DevOps Engineer">DevOps Engineer</option>
+              <option value="Product Manager">Product Manager</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Experience Level</label>
+            <select id="experience-level" required>
+              <option value="">Select your level</option>
+              <option value="Fresher">Fresher (0-1 years)</option>
+              <option value="Junior">Junior (1-3 years)</option>
+              <option value="Mid-Level">Mid-Level (3-5 years)</option>
+              <option value="Senior">Senior (5+ years)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Interview Type</label>
+            <select id="interview-type" required>
+              <option value="">Select interview type</option>
+              <option value="Technical">Technical</option>
+              <option value="Behavioral">Behavioral</option>
+              <option value="Mixed">Mixed</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Difficulty Level</label>
+            <select id="difficulty" required>
+              <option value="">Select difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btn-start-interview" style="width: 100%; margin-top: var(--spacing-lg);">
+            Start Interview
+          </button>
+        </div>
+
+        <!-- Info -->
+        <div class="setup-info">
+          <div class="setup-info-item">
+            <div class="setup-info-icon">🎯</div>
+            <div class="setup-info-content">
+              <div class="setup-info-title">Real Interview Experience</div>
+              <div class="setup-info-description">Practice with questions similar to real interviews</div>
+            </div>
+          </div>
+          <div class="setup-info-item">
+            <div class="setup-info-icon">📊</div>
+            <div class="setup-info-content">
+              <div class="setup-info-title">Instant Feedback</div>
+              <div class="setup-info-description">Get detailed analysis of your answers</div>
+            </div>
+          </div>
+          <div class="setup-info-item">
+            <div class="setup-info-icon">🎤</div>
+            <div class="setup-info-content">
+              <div class="setup-info-title">Voice Enabled</div>
+              <div class="setup-info-description">Answer questions using your microphone</div>
+            </div>
+          </div>
+          <div class="setup-info-item">
+            <div class="setup-info-icon">⏱️</div>
+            <div class="setup-info-content">
+              <div class="setup-info-title">Timed Questions</div>
+              <div class="setup-info-description">Practice answering under time pressure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interview Section -->
+    <div id="interview-live" class="interview-container" style="display: none;">
+      <div class="interview-main">
+        <!-- AI Status -->
+        <div class="ai-indicator">
+          <div class="ai-status">
+            <div class="ai-dot"></div>
+            <span class="ai-status-text">AI Interview Active</span>
+          </div>
+        </div>
+
+        <!-- Current Question -->
+        <div class="interview-question">
+          <div class="interview-question-label">Question</div>
+          <div class="interview-question-text">Loading question...</div>
+        </div>
+
+        <!-- User Transcript -->
+        <div class="interview-transcript">
+          <div class="transcript-label">Your Answer</div>
+          <div class="transcript-text transcript-empty">Your answer will appear here as you speak...</div>
+        </div>
+
+        <!-- Microphone Widget -->
+        <div class="microphone-widget">
+          <div class="microphone-icon">🎤</div>
+          <div class="microphone-status">Ready</div>
+          <div class="microphone-message">Click "Start Recording" when ready</div>
+
+          <!-- Waveform -->
+          <div class="waveform" id="waveform">
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="interview-controls">
+          <button type="button" class="btn btn-primary btn-interview" id="btn-start-recording">
+            Start Recording
+          </button>
+          <button type="button" class="btn btn-secondary btn-mute" id="btn-mute">
+            Mute
+          </button>
+          <button type="button" class="btn btn-ghost btn-stop" id="btn-stop-recording">
+            Stop & Submit
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="interview-sidebar">
+        <!-- Progress Widget -->
+        <div class="progress-widget">
+          <div class="progress-widget-title">Question Progress</div>
+          <div class="progress-questions">
+            <div class="progress-item current">1</div>
+            <div class="progress-item pending">2</div>
+            <div class="progress-item pending">3</div>
+            <div class="progress-item pending">4</div>
+            <div class="progress-item pending">5</div>
+            <div class="progress-item pending">6</div>
+            <div class="progress-item pending">7</div>
+            <div class="progress-item pending">8</div>
+            <div class="progress-item pending">9</div>
+            <div class="progress-item pending">10</div>
+          </div>
+        </div>
+
+        <!-- Previous Questions -->
+        <div class="previous-questions">
+          <div class="previous-questions-title">Questions Asked</div>
+          <div style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-tertiary);">
+            No questions yet
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/interview.js"></script>
+  </body>
+</html>

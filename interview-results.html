@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Results - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/interview.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      .results-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-2xl) var(--spacing-xl);
+      }
+
+      .results-header {
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+        animation: slide-up 0.6s ease-out;
+      }
+
+      .results-header h1 {
+        font-size: var(--font-4xl);
+        margin-bottom: var(--spacing-md);
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .results-header p {
+        color: var(--color-text-secondary);
+        font-size: var(--font-lg);
+      }
+
+      .score-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .score-display {
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-2xl);
+        text-align: center;
+      }
+
+      .score-circle {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto var(--spacing-lg);
+      }
+
+      .score-circle svg {
+        transform: rotate(-90deg);
+      }
+
+      .score-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+
+      .score-number {
+        font-size: var(--font-4xl);
+        font-weight: 700;
+        color: var(--color-neon-blue);
+      }
+
+      .score-label {
+        font-size: var(--font-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .result-box {
+        background: rgba(26, 31, 58, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+      }
+
+      .result-box-title {
+        font-size: var(--font-xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+      }
+
+      .result-list {
+        list-style: none;
+      }
+
+      .result-item {
+        padding: var(--spacing-md);
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 3px solid var(--color-neon-blue);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .result-item.positive {
+        border-left-color: #86efac;
+        background: rgba(34, 197, 94, 0.05);
+      }
+
+      .result-item.negative {
+        border-left-color: #fca5a5;
+        background: rgba(239, 68, 68, 0.05);
+      }
+
+      .result-item-title {
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .result-item-description {
+        font-size: var(--font-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .actions {
+        display: flex;
+        gap: var(--spacing-lg);
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .actions .btn {
+        min-width: 200px;
+      }
+
+      @media (max-width: 768px) {
+        .results-header h1 {
+          font-size: var(--font-3xl);
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .actions .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="results-container">
+      <!-- Header -->
+      <div class="results-header">
+        <h1>Interview Completed! 🎉</h1>
+        <p>Here's your detailed performance analysis</p>
+      </div>
+
+      <!-- Score Summary -->
+      <div class="score-summary">
+        <div class="score-display">
+          <div class="score-circle">
+            <div class="score-text">
+              <div class="score-number" id="total-score">85</div>
+              <div class="score-label">Overall Score</div>
+            </div>
+            <svg width="150" height="150" viewBox="0 0 150 150">
+              <circle cx="75" cy="75" r="70" fill="none" stroke="rgba(255, 255, 255, 0.1)" stroke-width="6"></circle>
+              <circle
+                cx="75"
+                cy="75"
+                r="70"
+                fill="none"
+                stroke="url(#gradient)"
+                stroke-width="6"
+                stroke-dasharray="369"
+                stroke-dashoffset="55"
+                stroke-linecap="round"
+              ></circle>
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color: #a855f7; stop-opacity: 1" />
+                  <stop offset="100%" style="stop-color: #ec4899; stop-opacity: 1" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="score-display">
+          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="communication-score">82</div>
+          <div class="score-label">Communication Score</div>
+        </div>
+
+        <div class="score-display">
+          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="technical-score">88</div>
+          <div class="score-label">Technical Score</div>
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div class="results-grid">
+        <!-- Strengths -->
+        <div class="result-box">
+          <div class="result-box-title">
+            <span>✅</span>
+            <span>Your Strengths</span>
+          </div>
+          <ul class="result-list" id="strengths-list">
+            <li class="result-item positive">
+              <div class="result-item-title">Clear Communication</div>
+              <div class="result-item-description">You expressed your thoughts clearly and concisely</div>
+            </li>
+            <li class="result-item positive">
+              <div class="result-item-title">Technical Knowledge</div>
+              <div class="result-item-description">Strong understanding of core concepts demonstrated</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Areas to Improve -->
+        <div class="result-box">
+          <div class="result-box-title">
+            <span>📈</span>
+            <span>Areas to Improve</span>
+          </div>
+          <ul class="result-list" id="improvements-list">
+            <li class="result-item negative">
+              <div class="result-item-title">Response Time</div>
+              <div class="result-item-description">Try to think through questions a bit faster</div>
+            </li>
+            <li class="result-item negative">
+              <div class="result-item-title">Example Usage</div>
+              <div class="result-item-description">Include more real-world examples in your answers</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="result-box" style="margin-bottom: var(--spacing-2xl);">
+        <div class="result-box-title">
+          <span>💡</span>
+          <span>AI Recommendations</span>
+        </div>
+        <ul class="result-list" id="recommendations-list">
+          <li class="result-item">
+            <div class="result-item-title">Practice more behavioral questions</div>
+            <div class="result-item-description">Focus on your storytelling and problem-solving approach</div>
+          </li>
+          <li class="result-item">
+            <div class="result-item-title">Work on system design concepts</div>
+            <div class="result-item-description">Deep dive into scalability and architecture patterns</div>
+          </li>
+          <li class="result-item">
+            <div class="result-item-title">Record practice sessions</div>
+            <div class="result-item-description">Review your responses to identify verbal patterns</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" onclick="window.location.href='voice-interview.html'">Take Another Interview</button>
+        <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        <button class="btn btn-ghost" onclick="window.print()">Download Report</button>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+      // Load interview results
+      async function loadResults() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const interviewId = urlParams.get('id');
+
+          if (!interviewId) {
+            UIHelper.error('No interview found');
+            return;
+          }
+
+          UIHelper.showLoading('Loading results...');
+
+          const response = await api.getInterviewResult(interviewId);
+
+          if (response.error) {
+            UIHelper.hideLoading();
+            UIHelper.error(response.error);
+            return;
+          }
+
+          displayResults(response);
+          UIHelper.hideLoading();
+        } catch (error) {
+          console.error('Error loading results:', error);
+          UIHelper.hideLoading();
+          UIHelper.error('Failed to load results');
+        }
+      }
+
+      function displayResults(data) {
+        // Update scores
+        document.getElementById('total-score').textContent = Math.round(data.totalScore || 0);
+        document.getElementById('communication-score').textContent = Math.round(data.communicationScore || 0);
+        document.getElementById('technical-score').textContent = Math.round(data.technicalScore || 0);
+
+        // Update strengths
+        const strengthsList = document.getElementById('strengths-list');
+        if (data.strengths && data.strengths.length > 0) {
+          strengthsList.innerHTML = data.strengths
+            .map(
+              (strength) => `
+            <li class="result-item positive">
+              <div class="result-item-title">${strength.title}</div>
+              <div class="result-item-description">${strength.description}</div>
+            </li>
+          `
+            )
+            .join('');
+        }
+
+        // Update improvements
+        const improvementsList = document.getElementById('improvements-list');
+        if (data.improvements && data.improvements.length > 0) {
+          improvementsList.innerHTML = data.improvements
+            .map(
+              (improvement) => `
+            <li class="result-item negative">
+              <div class="result-item-title">${improvement.title}</div>
+              <div class="result-item-description">${improvement.description}</div>
+            </li>
+          `
+            )
+            .join('');
+        }
+
+        // Update recommendations
+        const recommendationsList = document.getElementById('recommendations-list');
+        if (data.recommendations && data.recommendations.length > 0) {
+          recommendationsList.innerHTML = data.recommendations
+            .map(
+              (recommendation) => `
+            <li class="result-item">
+              <div class="result-item-title">${recommendation.title}</div>
+              <div class="result-item-description">${recommendation.description}</div>
+            </li>
+          `
+            )
+            .join('');
+        }
+      }
+
+      // Load results when page is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadResults);
+      } else {
+        loadResults();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - AI Interview</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">AI</div>
+          <span>Interview</span>
+        </div>
+        <nav class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <a href="dashboard.html" class="sidebar-nav-link active">
+              <span class="sidebar-nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="resume-analysis.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📄</span>
+              Resume
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="voice-interview.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">🎤</span>
+              Interview
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="profile.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">👤</span>
+              Profile
+            </a>
+          </li>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="dashboard-main">
+        <!-- Navbar -->
+        <nav class="navbar">
+          <div class="navbar-title">Dashboard</div>
+          <div class="navbar-actions">
+            <div class="navbar-search">
+              <input type="text" placeholder="Search..." />
+            </div>
+            <div class="navbar-user">
+              <div class="user-avatar" id="user-avatar">U</div>
+              <div class="user-menu">
+                <button class="user-menu-button" id="user-menu-button">⋮</button>
+                <div class="user-dropdown hidden" id="user-dropdown">
+                  <a href="profile.html" class="user-dropdown-item" id="profile-link">Profile</a>
+                  <a href="#" class="user-dropdown-item">Settings</a>
+                  <div class="user-dropdown-divider"></div>
+                  <button class="user-dropdown-item" id="logout-btn">Logout</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+          <h1>Welcome to your Dashboard</h1>
+          <p>Manage your profile, analyze resumes, and practice interviews</p>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+          <div class="welcome-card-content">
+            <h2>Ready to improve your interview skills?</h2>
+            <p>Choose one of our tools to get started</p>
+            <div class="welcome-card-actions">
+              <button class="btn" id="btn-analyze-resume">Analyze Resume</button>
+              <button class="btn" id="btn-start-interview">Start Interview</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="dashboard-grid">
+          <div class="stats-card">
+            <div class="stats-icon">📄</div>
+            <div class="stats-content">
+              <div class="stats-label">Resumes Analyzed</div>
+              <div class="stats-value" data-stat="resume-count">0</div>
+              <div class="stats-change">+2 this month</div>
+            </div>
+          </div>
+
+          <div class="stats-card">
+            <div class="stats-icon">🎤</div>
+            <div class="stats-content">
+              <div class="stats-label">Interviews Completed</div>
+              <div class="stats-value" data-stat="interview-count">0</div>
+              <div class="stats-change">+1 this month</div>
+            </div>
+          </div>
+
+          <div class="stats-card">
+            <div class="stats-icon">⭐</div>
+            <div class="stats-content">
+              <div class="stats-label">Average Score</div>
+              <div class="stats-value" data-stat="average-score">0</div>
+              <div class="stats-change positive">↑ 5% from last month</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="history-section">
+          <div class="section-header">
+            <div class="section-title">Quick Actions</div>
+          </div>
+          <div class="quick-actions">
+            <div class="action-card" onclick="window.location.href='resume-analysis.html'">
+              <div class="action-icon">📤</div>
+              <div class="action-title">Upload Resume</div>
+              <div class="action-description">Get instant ATS score and feedback</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='voice-interview.html'">
+              <div class="action-icon">🎤</div>
+              <div class="action-title">Start Interview</div>
+              <div class="action-description">Practice with AI-powered questions</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='profile.html'">
+              <div class="action-icon">⚙️</div>
+              <div class="action-title">View Profile</div>
+              <div class="action-description">Update your information</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume History -->
+        <div class="history-section">
+          <div class="section-header">
+            <div class="section-title">Recent Resumes</div>
+            <a href="resume-analysis.html" class="section-link">View All</a>
+          </div>
+          <table class="history-table resume-history">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Upload Date</th>
+                <th>ATS Score</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" class="text-center py-4">No resumes yet. Upload your first resume to get started.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Interview History -->
+        <div class="history-section">
+          <div class="section-header">
+            <div class="section-title">Recent Interviews</div>
+            <a href="#" class="section-link">View All</a>
+          </div>
+          <table class="history-table interview-history">
+            <thead>
+              <tr>
+                <th>Job Role</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" class="text-center py-4">No interviews yet. Start your first interview practice.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
