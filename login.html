@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - AI Interview</title>
+    <title>Login - Nexterview</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/auth.css" />
     <link rel="stylesheet" href="css/responsive.css" />
@@ -12,7 +12,7 @@
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>AI Interview</h1>
+          <h1>Nexterview</h1>
           <p>Welcome back! Let's continue your journey</p>
         </div>
 
@@ -74,6 +74,10 @@
         </form>
       </div>
     </div>
+
+    <footer>
+      <p>&copy; 2026 Created by Stavan Labs. All rights reserved.</p>
+    </footer>
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
@@ -155,9 +159,29 @@
 
           if (result.success) {
             this.showSuccess('Login successful! Redirecting...');
+
             setTimeout(() => {
-              window.location.href = loginRedirectTarget;
-            }, 1500);
+              const maxAttempts = 10;
+              let attempts = 0;
+
+              const attemptRedirect = () => {
+                attempts++;
+                const storedToken = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+                const storedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.USER);
+                console.log('[login] redirect check', { attempts, storedToken, storedUser });
+
+                if (storedToken) {
+                  window.location.replace(loginRedirectTarget);
+                } else if (attempts < maxAttempts) {
+                  setTimeout(attemptRedirect, 200);
+                } else {
+                  console.warn('[login] token not present after retries; redirecting anyway');
+                  window.location.replace(loginRedirectTarget);
+                }
+              };
+
+              attemptRedirect();
+            }, 300);
           } else {
             this.showError(result.error);
           }

@@ -1,9 +1,16 @@
+
 /* ============================================
    RESUME ANALYZER MODULE
    ============================================ */
 
 class ResumeAnalyzer {
   constructor() {
+    if (window.resumeAnalyzerInstance) {
+      console.warn('[resume] ResumeAnalyzer already initialized');
+      return window.resumeAnalyzerInstance;
+    }
+    window.resumeAnalyzerInstance = this;
+
     this.currentFile = null;
     this.analysisResults = null;
     this.init();
@@ -28,7 +35,18 @@ class ResumeAnalyzer {
     const fileInput = document.getElementById('resume-file');
 
     if (uploadBox) {
-      uploadBox.addEventListener('click', () => fileInput?.click());
+      console.log('[resume] setupEventListeners uploadBox click registered');
+      uploadBox.addEventListener('click', (e) => {
+        const target = e.target instanceof Element ? e.target : e.target.parentElement;
+        console.log('[resume] uploadBox click target', target?.id || target?.className || target?.nodeName);
+        if (target?.closest('#btn-analyze')) {
+          return;
+        }
+        if (target?.closest('#btn-reselect')) {
+          return;
+        }
+        fileInput?.click();
+      });
 
       // Drag and drop
       uploadBox.addEventListener('dragover', (e) => {
@@ -54,6 +72,7 @@ class ResumeAnalyzer {
     // File input
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
+        console.log('[resume] fileInput change event', e.target.files.length);
         if (e.target.files.length > 0) {
           this.handleFileSelect(e.target.files[0]);
         }
@@ -100,7 +119,13 @@ class ResumeAnalyzer {
         </div>
       `;
 
-      document.getElementById('btn-analyze').addEventListener('click', () => this.analyzeResume());
+      const analyzeButton = document.getElementById('btn-analyze');
+      if (analyzeButton) {
+        analyzeButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.analyzeResume();
+        });
+      }
     }
   }
 
@@ -118,6 +143,7 @@ class ResumeAnalyzer {
 
       // Upload file
       const uploadResponse = await api.uploadResume(this.currentFile);
+      console.log('[resume] uploadResponse', uploadResponse);
 
       if (uploadResponse.error) {
         UIHelper.hideLoading();
@@ -125,14 +151,37 @@ class ResumeAnalyzer {
         return;
       }
 
-      const resumeId = uploadResponse.resumeId || uploadResponse.id || uploadResponse.data?.resumeId || uploadResponse.data?.id;
+      const resumeId =
+        uploadResponse?.data?._id ||
+        uploadResponse?.data?.id ||
+        uploadResponse?.resumeId ||
+        uploadResponse?.id ||
+        uploadResponse?._id;
+      console.log('[resume] extracted resumeId', resumeId);
+
+      const analysisData = uploadResponse?.data && (
+        uploadResponse.data.atsScore !== undefined ||
+        uploadResponse.data.extractedText !== undefined ||
+        uploadResponse.data.missingSkills !== undefined ||
+        uploadResponse.data.suggestions !== undefined
+      )
+        ? uploadResponse.data
+        : null;
+
+      if (analysisData) {
+        this.analysisResults = analysisData;
+        this.displayResults(analysisData);
+        UIHelper.hideLoading();
+        UIHelper.success('Resume uploaded and analyzed successfully!');
+        return;
+      }
+
       if (!resumeId) {
         UIHelper.hideLoading();
         UIHelper.error('Could not determine uploaded resume ID');
         return;
       }
 
-      // Get analysis
       const analysisResponse = await api.analyzeResume(resumeId);
 
       if (analysisResponse.error) {
@@ -154,6 +203,66 @@ class ResumeAnalyzer {
   }
 
   /**
+   * Extract strengths from resume text
+   */
+  extractStrengths(data) {
+    const strengths = [];
+
+    // Add ATS score insight
+    if (data.atsScore >= 70) {
+      strengths.push('Strong ATS compatibility (score: ' + data.atsScore + ')');
+    } else if (data.atsScore >= 50) {
+      strengths.push('Moderate ATS compatibility (score: ' + data.atsScore + ')');
+    }
+
+    // Parse extractedText for sections
+    if (data.extractedText) {
+      const text = data.extractedText;
+
+      // Check for education
+      if (text.match(/EDUCATION|Education|degree|diploma|certification/i)) {
+        strengths.push('Strong educational background documented');
+      }
+
+      // Check for experience
+      if (text.match(/EXPERIENCE|Experience|years|apprentice|trainee|role/i)) {
+        strengths.push('Relevant professional experience highlighted');
+      }
+
+      // Check for technical skills
+      if (text.match(/Technical|Skills|software|tools|languages|SAP|Excel|ERP/i)) {
+        strengths.push('Technical skills clearly articulated');
+      }
+
+      // Check for certifications
+      if (text.match(/CERTIFICATION|Certificate|certified/i)) {
+        strengths.push('Relevant certifications included');
+      }
+
+      // Check for contact info
+      if (text.match(/CONTACT|Email|Phone|Address|LinkedIn/i)) {
+        strengths.push('Contact information properly formatted');
+      }
+    }
+
+    return strengths.length > 0 ? strengths : ['Resume successfully uploaded and processed'];
+  }
+
+  /**
+   * Extract improvements from suggestions
+   */
+  extractImprovements(suggestions) {
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      return [
+        'Consider restructuring resume layout for better readability',
+        'Review keyword optimization for your target role',
+        'Ensure consistent formatting throughout document'
+      ];
+    }
+    return suggestions.slice(0, 3);
+  }
+
+  /**
    * Display analysis results
    */
   displayResults(data) {
@@ -166,6 +275,9 @@ class ResumeAnalyzer {
     // Display results
     const resultsContainer = document.querySelector('.analysis-results');
     if (!resultsContainer) return;
+
+    const strengths = this.extractStrengths(data);
+    const improvements = this.extractImprovements(data.suggestions);
 
     resultsContainer.innerHTML = `
       <div class="analysis-results-grid">
@@ -180,7 +292,7 @@ class ResumeAnalyzer {
           Resume Strengths
         </div>
         <ul class="report-items">
-          ${(data.strengths || [])
+          ${strengths
             .map((strength) => `<li class="report-item"><span class="report-item-icon">•</span><div class="report-item-content"><div class="report-item-title">${strength}</div></div></li>`)
             .join('')}
         </ul>
@@ -192,7 +304,7 @@ class ResumeAnalyzer {
           Areas for Improvement
         </div>
         <ul class="report-items">
-          ${(data.improvements || [])
+          ${improvements
             .map((improvement) => `<li class="report-item"><span class="report-item-icon">•</span><div class="report-item-content"><div class="report-item-title">${improvement}</div></div></li>`)
             .join('')}
         </ul>
@@ -216,15 +328,24 @@ class ResumeAnalyzer {
           AI Suggestions
         </div>
         <div class="suggestions-container">
-          ${(data.suggestions || [])
-            .map((suggestion, index) => `
+          ${(data.suggestions || []).map((suggestion, index) => {
+            if (typeof suggestion === 'string') {
+              return `
+                <div class="suggestion-card">
+                  <div class="suggestion-number">${index + 1}</div>
+                  <div class="suggestion-description">${suggestion}</div>
+                </div>
+              `;
+            }
+
+            return `
               <div class="suggestion-card">
                 <div class="suggestion-number">${index + 1}</div>
-                <div class="suggestion-title">${suggestion.title}</div>
-                <div class="suggestion-description">${suggestion.description}</div>
+                <div class="suggestion-title">${suggestion.title || 'Suggestion'}</div>
+                <div class="suggestion-description">${suggestion.description || suggestion.text || ''}</div>
               </div>
-            `)
-            .join('')}
+            `;
+          }).join('')}
         </div>
       </div>
 

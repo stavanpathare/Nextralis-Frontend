@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register - AI Interview</title>
+    <title>Register - Nexterview</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/auth.css" />
     <link rel="stylesheet" href="css/responsive.css" />
@@ -12,7 +12,7 @@
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>AI Interview</h1>
+          <h1>Nexterview</h1>
           <p>Start your journey to acing interviews</p>
         </div>
 
@@ -106,6 +106,10 @@
         </form>
       </div>
     </div>
+
+    <footer>
+      <p>&copy; 2026 Created by Stavan Labs. All rights reserved.</p>
+    </footer>
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
@@ -230,9 +234,29 @@
 
           if (result.success) {
             this.showSuccess('Account created successfully! Redirecting...');
+
             setTimeout(() => {
-              window.location.href = registerRedirectTarget;
-            }, 1500);
+              const maxAttempts = 10;
+              let attempts = 0;
+
+              const attemptRedirect = () => {
+                attempts++;
+                const storedToken = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+                const storedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.USER);
+                console.log('[register] redirect check', { attempts, storedToken, storedUser });
+
+                if (storedToken) {
+                  window.location.replace(registerRedirectTarget);
+                } else if (attempts < maxAttempts) {
+                  setTimeout(attemptRedirect, 200);
+                } else {
+                  console.warn('[register] token not present after retries; redirecting anyway');
+                  window.location.replace(registerRedirectTarget);
+                }
+              };
+
+              attemptRedirect();
+            }, 300);
           } else {
             this.showError(result.error);
           }

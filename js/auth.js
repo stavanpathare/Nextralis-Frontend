@@ -5,7 +5,31 @@
 class AuthManager {
   constructor() {
     this.user = this.loadUser();
-    this.token = api.getToken();
+    this.token = this.loadToken();
+  }
+
+  /**
+   * Load auth token from localStorage
+   */
+  loadToken() {
+    let token = null;
+    try {
+      token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+      if (!token && typeof api !== 'undefined' && api) {
+        token = api.getToken();
+      }
+    } catch (e) {
+      console.error('[auth] loadToken error reading localStorage', e);
+      if (typeof api !== 'undefined' && api) {
+        token = api.getToken();
+      }
+    }
+
+    if (token) {
+      this.token = token;
+      return token;
+    }
+    return null;
   }
 
   /**
@@ -51,24 +75,48 @@ class AuthManager {
    * Normalize auth response payloads across backend shapes
    */
   normalizeAuthResponse(response) {
-    const payload = response?.data || response || {};
-    const token = payload.token || payload.accessToken || payload.access_token || payload.authToken || payload.sessionToken;
-    const user = payload.user || payload.userData || payload.userInfo || payload.profile || payload;
-    return { token, user };
-  }
+  const payload = response?.data?.data || response?.data || response || {};
+
+  const token =
+    payload.token ||
+    payload.accessToken ||
+    payload.access_token ||
+    payload.authToken ||
+    payload.sessionToken;
+
+  const user =
+    payload.user ||
+    payload.userData ||
+    payload.userInfo ||
+    payload.profile ||
+    {};
+
+  return { token, user };
+}
 
   /**
    * Check if user is authenticated
    */
   isAuthenticated() {
-    return !!this.token && this.user !== null;
+    if (!this.token) {
+      this.token = this.loadToken();
+    }
+    if (!this.token) {
+      return false;
+    }
+
+    if (this.user === null) {
+      this.user = this.loadUser();
+    }
+
+    return true;
   }
 
   /**
    * Get current user
    */
   getCurrentUser() {
-    return this.user;
+    return this.user || {};
   }
 
   /**
@@ -104,6 +152,7 @@ class AuthManager {
   async login(email, password) {
     try {
       const response = await api.login(email, password);
+      console.log('[auth] login response', response);
 
       if (response.error) {
         return { success: false, error: response.error };
@@ -111,11 +160,24 @@ class AuthManager {
 
       const { token, user } = this.normalizeAuthResponse(response);
       if (!token) {
+        console.warn('[auth] login: no token extracted from response');
         return { success: false, error: 'No authentication token returned from server' };
       }
 
       api.setToken(token);
+      try {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
+      } catch (e) {
+        console.error('[auth] login fallback token save failed', e);
+      }
+      console.log('[auth] login: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
+      try {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
+      } catch (e) {
+        console.error('[auth] login fallback user save failed', e);
+      }
+      console.log('[auth] login: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
       return { success: true, data: response };
     } catch (error) {
@@ -130,6 +192,7 @@ class AuthManager {
   async register(name, email, password) {
     try {
       const response = await api.register(name, email, password);
+      console.log('[auth] register response', response);
 
       if (response.error) {
         return { success: false, error: response.error };
@@ -137,11 +200,24 @@ class AuthManager {
 
       const { token, user } = this.normalizeAuthResponse(response);
       if (!token) {
+        console.warn('[auth] register: no token extracted from response');
         return { success: false, error: 'No authentication token returned from server' };
       }
 
       api.setToken(token);
+      try {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
+      } catch (e) {
+        console.error('[auth] register fallback token save failed', e);
+      }
+      console.log('[auth] register: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
+      try {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
+      } catch (e) {
+        console.error('[auth] register fallback user save failed', e);
+      }
+      console.log('[auth] register: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
 
       return { success: true, data: response };
@@ -155,11 +231,16 @@ class AuthManager {
    * Logout user
    */
   logout() {
+    console.log('[auth] logout: clearing auth state');
     api.setToken(null);
     this.user = null;
     this.token = null;
-    localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
-    localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+    try {
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+    } catch (e) {
+      console.error('[auth] logout error clearing localStorage', e);
+    }
   }
 
   /**
@@ -168,12 +249,14 @@ class AuthManager {
   async verifyToken() {
     try {
       const response = await api.verifyToken();
-      if (response.error) {
+      console.log('[auth] verifyToken response', response);
+      if (response?.error || response?.success === false) {
         this.logout();
         return false;
       }
       return true;
     } catch (error) {
+      console.error('[auth] verifyToken error', error);
       this.logout();
       return false;
     }

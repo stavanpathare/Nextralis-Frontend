@@ -13,10 +13,16 @@ class APIClient {
    */
   setToken(token) {
     this.token = token;
-    if (token) {
-      localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
-    } else {
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+    try {
+      if (token) {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
+        console.log('[api] setToken stored', CONFIG.STORAGE_KEYS.TOKEN, token);
+      } else {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+        console.log('[api] setToken removed token');
+      }
+    } catch (e) {
+      console.error('[api] setToken error saving token to localStorage', e);
     }
   }
 
@@ -24,7 +30,19 @@ class APIClient {
    * Get authentication token
    */
   getToken() {
-    return this.token || localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+    if (!this.token) {
+      try {
+        this.token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
+        console.log('[api] getToken loaded from localStorage', this.token);
+      } catch (e) {
+        console.error('[api] getToken error reading localStorage', e);
+        this.token = null;
+      }
+    } else {
+      // in-memory token
+      // console.log('[api] getToken in-memory', this.token);
+    }
+    return this.token;
   }
 
   /**
@@ -60,7 +78,9 @@ class APIClient {
       // Token expired or unauthorized
       this.setToken(null);
       localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
-      window.location.href = 'login.html';
+      if (!window.location.pathname.endsWith('login.html')) {
+        window.location.href = 'login.html';
+      }
       return { error: 'Session expired. Please login again.' };
     }
 
