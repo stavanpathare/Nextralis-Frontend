@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://nexterview.netlify.app/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/index.html</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/login.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/register.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/dashboard.html</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/resume-analysis.html</loc>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/voice-interview.html</loc>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/profile.html</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nexterview.netlify.app/interview-results.html</loc>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>
