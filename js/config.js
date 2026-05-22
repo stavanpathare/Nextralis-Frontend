@@ -29,15 +29,11 @@ const CONFIG = {
 
     // Interview
     START_INTERVIEW: '/interview/start',
-    SUBMIT_ANSWER: '/interview/submit-answer',
+    SUBMIT_ANSWER: '/interview/answer',
     END_INTERVIEW: '/interview/end',
     GET_INTERVIEW_HISTORY: '/interview/history',
-    GET_INTERVIEW_RESULT: '/interview/:id',
+    GET_INTERVIEW_RESULT: '/interview/report/:id',
 
-    // AI Responses
-    GET_QUESTION: '/ai/question',
-    EVALUATE_ANSWER: '/ai/evaluate',
-    GET_FEEDBACK: '/ai/feedback',
   },
 
   // Storage Keys
