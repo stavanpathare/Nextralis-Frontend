@@ -79,7 +79,17 @@
     if(resetBtn.disabled) return;
     try{
       resetBtn.disabled=true; resetBtn.classList.add('loading'); showOverlay(true); createToast('loading','Resetting password...',{duration:0});
-      const res = await fetch(`${API_BASE}/auth/reset-password/${encodeURIComponent(token)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    token,
+    password,
+    confirmPassword: conf,
+  }),
+});
       const data = await res.json().catch(()=>({})); debug('response', res.status, data);
       Array.from(toastRoot.querySelectorAll('.toast-loading')).forEach(t=>t.remove());
       if(res.ok){ createToast('success','Password reset successful'); messageNode.innerHTML='<strong>Password updated</strong><div class="msg-sub">Redirecting to login…</div>';
