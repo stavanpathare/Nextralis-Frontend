@@ -6,6 +6,9 @@
   const overlay = document.getElementById('overlay');
   const messageNode = document.getElementById('fp-message');
   const toastRoot = document.getElementById('toast-root');
+  
+  // API endpoint from config
+  const API_URL = `${CONFIG.API_BASE_URL}/auth/forgot-password`;
 
   function debug(...args){ console.debug('[FP]', ...args); }
 
@@ -42,7 +45,7 @@
       sendBtn.disabled = true; sendBtn.classList.add('loading'); showOverlay(true);
       createToast('loading','Sending reset link...',{duration:0});
 
-      const res = await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+      const res = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
       const data = await res.json().catch(()=>({}));
       debug('response', res.status, data);
 
