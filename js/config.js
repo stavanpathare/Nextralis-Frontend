@@ -17,9 +17,9 @@ const CONFIG = {
     VERIFY_TOKEN: '/auth/verify',
 
     // User Profile
-    GET_PROFILE: '/user/profile',
-    UPDATE_PROFILE: '/user/profile',
-    GET_USER_STATS: '/user/stats',
+    GET_PROFILE: '/auth/profile',
+    UPDATE_PROFILE: '/auth/profile',
+    GET_USER_STATS: '/auth/stats',
 
     // Resume
     UPLOAD_RESUME: '/resume/upload',
