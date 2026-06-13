@@ -148,30 +148,39 @@ class Dashboard {
       // Load user stats
       let stats = { totalResumes: 0, totalInterviews: 0, averageScore: 0 };
       try {
+        const endpoint = CONFIG.ENDPOINTS.GET_USER_STATS;
         const statsResponse = await api.getUserStats();
-        stats = statsResponse.stats || statsResponse.data || statsResponse || stats;
-      } catch (e) {
-        console.warn('Could not load dashboard stats; using defaults.', e);
+        console.log('[Dashboard API]', endpoint, statsResponse);
+        stats = statsResponse?.data || stats;
+      } catch (error) {
+        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_USER_STATS, error);
+        console.warn('Could not load dashboard stats; using defaults.', error);
       }
       this.displayStats(stats);
 
       // Load resume history
       let resumeHistory = [];
       try {
+        const endpoint = CONFIG.ENDPOINTS.GET_RESUME_HISTORY;
         const resumeResponse = await api.getResumeHistory();
-        resumeHistory = resumeResponse.resumes || resumeResponse.data || resumeResponse || [];
-      } catch (e) {
-        console.warn('Could not load resume history; using empty list.', e);
+        console.log('[Dashboard API]', endpoint, resumeResponse);
+        resumeHistory = resumeResponse?.data || [];
+      } catch (error) {
+        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_RESUME_HISTORY, error);
+        console.warn('Could not load resume history; using empty list.', error);
       }
       this.displayResumeHistory(resumeHistory);
 
       // Load interview history
       let interviewHistory = [];
       try {
+        const endpoint = CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY;
         const interviewResponse = await api.getInterviewHistory();
-        interviewHistory = interviewResponse.interviews || interviewResponse.data || interviewResponse || [];
-      } catch (e) {
-        console.warn('Could not load interview history; using empty list.', e);
+        console.log('[Dashboard API]', endpoint, interviewResponse);
+        interviewHistory = interviewResponse?.data || [];
+      } catch (error) {
+        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY, error);
+        console.warn('Could not load interview history; using empty list.', error);
       }
       this.displayInterviewHistory(interviewHistory);
 
