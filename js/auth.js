@@ -230,8 +230,13 @@ class AuthManager {
   /**
    * Logout user
    */
-  logout() {
+  async logout() {
     console.log('[auth] logout: clearing auth state');
+    try {
+      await api.logout();
+    } catch (e) {
+      console.warn('[auth] logout: server logout failed', e);
+    }
     api.setToken(null);
     this.user = null;
     this.token = null;
@@ -251,13 +256,13 @@ class AuthManager {
       const response = await api.verifyToken();
       console.log('[auth] verifyToken response', response);
       if (response?.error || response?.success === false) {
-        this.logout();
+        await this.logout();
         return false;
       }
       return true;
     } catch (error) {
       console.error('[auth] verifyToken error', error);
-      this.logout();
+      await this.logout();
       return false;
     }
   }

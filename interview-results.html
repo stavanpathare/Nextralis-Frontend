@@ -311,6 +311,7 @@
           UIHelper.showLoading('Loading results...');
 
           const response = await api.getInterviewResult(interviewId);
+          const report = response?.data || response;
 
           if (response.error) {
             UIHelper.hideLoading();
@@ -318,7 +319,7 @@
             return;
           }
 
-          displayResults(response);
+          displayResults(report);
           UIHelper.hideLoading();
         } catch (error) {
           console.error('Error loading results:', error);
