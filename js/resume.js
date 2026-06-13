@@ -182,19 +182,9 @@ class ResumeAnalyzer {
         return;
       }
 
-      const analysisResponse = await api.analyzeResume(resumeId);
-
-      if (analysisResponse.error) {
-        UIHelper.hideLoading();
-        UIHelper.error(analysisResponse.error);
-        return;
-      }
-
-      this.analysisResults = analysisResponse;
-      this.displayResults(analysisResponse);
-
+      // Analysis should be returned with the upload response. If not, inform the user.
       UIHelper.hideLoading();
-      UIHelper.success('Resume analyzed successfully!');
+      UIHelper.error('Resume uploaded but analysis not available. Please try again.');
     } catch (error) {
       console.error('Error analyzing resume:', error);
       UIHelper.hideLoading();

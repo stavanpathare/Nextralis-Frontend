@@ -265,9 +265,7 @@ class APIClient {
     return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume' });
   }
 
-  async analyzeResume(resumeId) {
-    return this.post(CONFIG.ENDPOINTS.ANALYZE_RESUME, { resumeId });
-  }
+  // analyzeResume removed — upload returns analysis directly from server
 
   async getResumeHistory() {
     return this.get(CONFIG.ENDPOINTS.GET_RESUME_HISTORY);
@@ -310,29 +308,7 @@ class APIClient {
   async getInterviewResult(interviewId) {
     return this.get(CONFIG.ENDPOINTS.GET_INTERVIEW_RESULT.replace(':id', interviewId));
   }
-
-  /* ============================================
-     AI ENDPOINTS
-     ============================================ */
-
-  async getQuestion(interviewId, questionNumber) {
-    return this.post(CONFIG.ENDPOINTS.GET_QUESTION, {
-      interviewId,
-      questionNumber,
-    });
-  }
-
-  async evaluateAnswer(interviewId, questionId, answer) {
-    return this.post(CONFIG.ENDPOINTS.EVALUATE_ANSWER, {
-      interviewId,
-      questionId,
-      answer,
-    });
-  }
-
-  async getFeedback(interviewId) {
-    return this.get(CONFIG.ENDPOINTS.GET_FEEDBACK + `?interviewId=${interviewId}`);
-  }
+  // Note: AI-specific helper endpoints removed — interview flow uses /start and /answer routes.
 }
 
 // Create global API client instance

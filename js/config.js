@@ -15,6 +15,7 @@ const CONFIG = {
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh',
     VERIFY_TOKEN: '/auth/verify',
+    CHANGE_PASSWORD: '/auth/change-password',
 
     // User Profile
     GET_PROFILE: '/auth/profile',
@@ -23,7 +24,6 @@ const CONFIG = {
 
     // Resume
     UPLOAD_RESUME: '/resume/upload',
-    ANALYZE_RESUME: '/resume/analyze',
     GET_RESUME_HISTORY: '/resume/history',
     DELETE_RESUME: '/resume/:id',
 

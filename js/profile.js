@@ -338,7 +338,7 @@ class ProfileManager {
     try {
       UIHelper.showLoading('Changing password...');
 
-      const response = await api.put('/user/change-password', {
+      const response = await api.put(CONFIG.ENDPOINTS.CHANGE_PASSWORD, {
         currentPassword,
         newPassword,
       });
