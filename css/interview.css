@@ -421,6 +421,10 @@
   flex: 1;
 }
 
+.btn-exit {
+  flex: 1;
+}
+
 /* Interview Results */
 
 .interview-results {

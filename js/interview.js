@@ -190,6 +190,7 @@ class VoiceInterview {
     const startBtn = document.getElementById('btn-start-recording');
     const stopBtn = document.getElementById('btn-stop-recording');
     const muteBtn = document.getElementById('btn-mute');
+    const exitBtn = document.getElementById('btn-exit-interview');
 
     if (startBtn && !startBtn.dataset.listenerAttached) {
       startBtn.addEventListener('click', () => this.startListening());
@@ -204,6 +205,11 @@ class VoiceInterview {
     if (muteBtn && !muteBtn.dataset.listenerAttached) {
       muteBtn.addEventListener('click', () => this.toggleMute());
       muteBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (exitBtn && !exitBtn.dataset.listenerAttached) {
+      exitBtn.addEventListener('click', () => this.exitInterview());
+      exitBtn.dataset.listenerAttached = 'true';
     }
 
     // Progress indicators
@@ -497,6 +503,56 @@ class VoiceInterview {
       console.error('Error ending interview:', error);
       UIHelper.hideLoading();
       UIHelper.error('Failed to end interview');
+    }
+  }
+
+  /**
+   * Exit interview - user initiated exit
+   */
+  async exitInterview() {
+    // Confirm exit
+    const confirmed = confirm('Are you sure you want to exit the interview? Your results will be evaluated based on the answers provided so far.');
+    
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      // Stop recording if it's active
+      if (this.isListening && this.recognition) {
+        try {
+          this.recognition.stop();
+        } catch (e) {
+          console.warn('[voice] recognition.stop error during exit', e);
+        }
+      }
+
+      UIHelper.showLoading('Exiting interview and calculating score...');
+
+      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
+      console.log('[voice] exitInterview - interviewId', interviewId);
+
+      // Call end interview endpoint to finalize and calculate score
+      const response = await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
+
+      if (response?.error) {
+        UIHelper.hideLoading();
+        UIHelper.error(response.error);
+        return;
+      }
+
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
+
+      UIHelper.hideLoading();
+      UIHelper.success('Interview exited. Loading your results...');
+
+      setTimeout(() => {
+        window.location.href = `/interview-results.html?id=${interviewId}`;
+      }, 800);
+    } catch (error) {
+      console.error('[voice] Error exiting interview:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to exit interview');
     }
   }
 

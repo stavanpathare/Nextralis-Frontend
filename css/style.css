@@ -241,6 +241,18 @@ a:hover {
   color: var(--color-neon-blue);
 }
 
+.btn-danger {
+  background: transparent;
+  color: #ff6b6b;
+  border: 1.5px solid #ff6b6b;
+}
+
+.btn-danger:hover {
+  background: rgba(255, 107, 107, 0.1);
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+  transform: translateY(-2px);
+}
+
 .btn-sm {
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-sm);
