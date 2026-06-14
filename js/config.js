@@ -29,6 +29,7 @@ const CONFIG = {
     DELETE_RESUME: '/resume/:id',
 
     // Interview
+    DELETE_INTERVIEW: '/interview/:id',
     START_INTERVIEW: '/interview/start',
     SUBMIT_ANSWER: '/interview/answer',
     END_INTERVIEW: '/interview/end',

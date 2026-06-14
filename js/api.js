@@ -309,6 +309,10 @@ class APIClient {
     return this.get(CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY);
   }
 
+  async deleteInterview(interviewId) {
+    return this.delete(CONFIG.ENDPOINTS.DELETE_INTERVIEW.replace(':id', interviewId));
+  }
+
   async getInterviewResult(interviewId) {
     return this.get(CONFIG.ENDPOINTS.GET_INTERVIEW_RESULT.replace(':id', interviewId));
   }

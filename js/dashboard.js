@@ -4,6 +4,7 @@
 
 class Dashboard {
   constructor() {
+    window.dashboard = this;
     this.init();
   }
 
@@ -249,6 +250,9 @@ class Dashboard {
           <button class="btn btn-sm btn-ghost" onclick="window.location.href='resume-analysis.html?id=${resumeId}'">
             View
           </button>
+          <button class="btn btn-sm btn-danger" onclick="window.dashboard.deleteResume('${resumeId}')">
+            Delete
+          </button>
         </td>
       </tr>
     `;
@@ -289,6 +293,9 @@ class Dashboard {
           <button class="btn btn-sm btn-ghost" onclick="window.location.href='interview-results.html?id=${interviewId}'">
             View
           </button>
+          <button class="btn btn-sm btn-danger" onclick="window.dashboard.deleteInterview('${interviewId}')">
+            Delete
+          </button>
         </td>
       </tr>
     `;
@@ -300,6 +307,52 @@ class Dashboard {
   /**
    * Handle search
    */
+  async deleteResume(resumeId) {
+    const confirmed = confirm('Delete this resume permanently?');
+    if (!confirmed) return;
+
+    try {
+      UIHelper.showLoading('Deleting resume...');
+      const response = await api.deleteResume(resumeId);
+      UIHelper.hideLoading();
+
+      if (response?.error) {
+        UIHelper.error(response.error || 'Failed to delete resume');
+        return;
+      }
+
+      UIHelper.success('Resume deleted successfully');
+      await this.loadDashboardData();
+    } catch (error) {
+      console.error('Error deleting resume:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to delete resume');
+    }
+  }
+
+  async deleteInterview(interviewId) {
+    const confirmed = confirm('Delete this interview permanently?');
+    if (!confirmed) return;
+
+    try {
+      UIHelper.showLoading('Deleting interview...');
+      const response = await api.deleteInterview(interviewId);
+      UIHelper.hideLoading();
+
+      if (response?.error) {
+        UIHelper.error(response.error || 'Failed to delete interview');
+        return;
+      }
+
+      UIHelper.success('Interview deleted successfully');
+      await this.loadDashboardData();
+    } catch (error) {
+      console.error('Error deleting interview:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to delete interview');
+    }
+  }
+
   handleSearch(query) {
     // Implement search functionality
     console.log('Search query:', query);
