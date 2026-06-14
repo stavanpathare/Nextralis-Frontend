@@ -23,7 +23,56 @@ class ResumeAnalyzer {
       return;
     }
 
-    this.setupEventListeners();
+    // Check if viewing an existing resume
+    const urlParams = new URLSearchParams(window.location.search);
+    const resumeId = urlParams.get('id');
+
+    if (resumeId) {
+      // Load existing resume analysis
+      await this.loadResumeAnalysis(resumeId);
+    } else {
+      // Show upload interface
+      this.setupEventListeners();
+    }
+  }
+
+  /**
+   * Load existing resume analysis
+   */
+  async loadResumeAnalysis(resumeId) {
+    try {
+      UIHelper.showLoading('Loading resume analysis...');
+
+      // Call API to get resume details
+      const response = await api.getResumeAnalysis(resumeId);
+      console.log('[resume] loadResumeAnalysis - response', response);
+
+      if (response.error) {
+        UIHelper.hideLoading();
+        UIHelper.error(response.error || 'Failed to load resume analysis');
+        return;
+      }
+
+      const analysisData = response?.data || response;
+      if (analysisData) {
+        this.analysisResults = analysisData;
+        // Hide upload section
+        const uploadSection = document.querySelector('.upload-section');
+        if (uploadSection) {
+          uploadSection.style.display = 'none';
+        }
+        // Display results
+        this.displayResults(analysisData);
+        UIHelper.hideLoading();
+      } else {
+        UIHelper.hideLoading();
+        UIHelper.error('Could not load resume analysis data');
+      }
+    } catch (error) {
+      console.error('[resume] Error loading resume analysis:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to load resume analysis');
+    }
   }
 
   /**

@@ -24,6 +24,7 @@ const CONFIG = {
 
     // Resume
     UPLOAD_RESUME: '/resume/upload',
+    GET_RESUME: '/resume/:id',
     GET_RESUME_HISTORY: '/resume/history',
     DELETE_RESUME: '/resume/:id',
 

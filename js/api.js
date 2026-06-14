@@ -271,6 +271,10 @@ class APIClient {
     return this.get(CONFIG.ENDPOINTS.GET_RESUME_HISTORY);
   }
 
+  async getResumeAnalysis(resumeId) {
+    return this.get(CONFIG.ENDPOINTS.GET_RESUME.replace(':id', resumeId));
+  }
+
   async deleteResume(resumeId) {
     return this.delete(CONFIG.ENDPOINTS.DELETE_RESUME.replace(':id', resumeId));
   }
