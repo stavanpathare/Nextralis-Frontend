@@ -131,6 +131,7 @@ class VoiceInterview {
         }
         this.currentQuestion = firstQuestion;
         this.questionCount = 1;
+        this.questionCount++;
         this.displayQuestion(firstQuestion);
         this.speakQuestion(firstQuestion.question || firstQuestion.text || firstQuestion.prompt || '');
       } else {
@@ -304,6 +305,8 @@ class VoiceInterview {
    * Display question
    */
   displayQuestion(questionData) {
+    console.log('[voice] displayQuestion received:', questionData);
+
     const questionElement = document.querySelector('.interview-question-text');
     let qText = '';
     if (typeof questionData === 'string') {
@@ -329,24 +332,40 @@ class VoiceInterview {
    * Speak question
    */
   speakQuestion(text) {
-    if (!this.synthesis || !text) return;
+  console.log('[voice] speakQuestion called:', text);
 
-    try {
-      this.synthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      this.speaking = true;
-      utterance.onend = () => {
-        this.speaking = false;
-      };
-      this.synthesis.speak(utterance);
-      console.log('[voice] speakQuestion -', text);
-    } catch (e) {
-      console.error('[voice] TTS error', e);
-    }
+  if (!this.synthesis || !text) {
+    console.error('[voice] Cannot speak. Empty text.');
+    return;
   }
+
+  try {
+    this.synthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onstart = () => {
+      console.log('[voice] Speech started');
+    };
+
+    utterance.onend = () => {
+      console.log('[voice] Speech ended');
+    };
+
+    utterance.onerror = (e) => {
+      console.error('[voice] Speech error', e);
+    };
+
+    this.synthesis.speak(utterance);
+
+  } catch (e) {
+    console.error('[voice] TTS error', e);
+  }
+}
 
   /**
    * Start listening
@@ -438,9 +457,28 @@ class VoiceInterview {
       UIHelper.hideLoading();
 
       if (nextQuestion) {
-        this.currentQuestion = nextQuestion;
-        this.displayQuestion(nextQuestion);
-        this.speakQuestion(nextQuestion.question || nextQuestion.text || nextQuestion.prompt || '');
+
+        const normalizedQuestion =
+          typeof nextQuestion === 'string'
+            ? { question: nextQuestion }
+            : nextQuestion;
+
+        this.currentQuestion = normalizedQuestion;
+
+        this.displayQuestion(normalizedQuestion);
+
+        const questionText =
+          normalizedQuestion.question ||
+          normalizedQuestion.text ||
+          normalizedQuestion.prompt ||
+          '';
+
+        console.log('[voice] Next question:', questionText);
+
+        this.speakQuestion(questionText);
+
+        this.questionCount++;
+
         this.updateProgressUI();
       } else if (finalReport) {
         // End interview and redirect
