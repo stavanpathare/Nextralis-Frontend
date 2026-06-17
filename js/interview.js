@@ -131,7 +131,7 @@ class VoiceInterview {
         }
         this.currentQuestion = firstQuestion;
         this.questionCount = 1;
-        this.questionCount++;
+        // this.questionCount++;
         this.displayQuestion(firstQuestion);
         this.speakQuestion(firstQuestion.question || firstQuestion.text || firstQuestion.prompt || '');
       } else {
