@@ -56,4 +56,13 @@
     <priority>0.7</priority>
   </url>
 
+  <url>
+    <loc>https://nextralis.netlify.app/privacy-policy.html</loc>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://nextralis.netlify.app/terms-of-service.html</loc>
+    <priority>0.5</priority>
+  </url>
 </urlset>
