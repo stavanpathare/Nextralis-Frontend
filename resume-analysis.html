@@ -54,41 +54,45 @@
 
     <!-- Upload Section -->
     <div class="upload-section">
-      <!-- Upload Box -->
       <div class="upload-box" id="upload-box">
         <div class="upload-box-icon">📤</div>
         <div class="upload-box-text">
-          <div class="upload-box-title">Drag & drop your resume here</div>
-          <div class="upload-box-description">or click to browse (PDF, DOCX - max 5MB)</div>
+          <div class="upload-box-title">Drop your resume here</div>
+          <div class="upload-box-description">PDF only • up to 5MB</div>
         </div>
         <button type="button" class="btn btn-secondary">Choose File</button>
-        <input type="file" id="resume-file" accept=".pdf,.doc,.docx" style="display: none" />
+        <input type="file" id="resume-file" accept=".pdf" style="display: none" />
       </div>
 
-      <!-- Analysis Panel -->
       <div class="analysis-panel">
         <div class="analysis-item">
           <div class="analysis-item-title">Upload Status</div>
-          <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
-            Ready to upload
+          <div class="analysis-item-value" id="upload-status-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
+            Ready for a premium review
           </div>
         </div>
         <div class="analysis-item">
-          <div class="analysis-item-title">File Type Accepted</div>
-          <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
-            PDF or DOCX
-          </div>
+          <div class="analysis-item-title">Target Role</div>
+          <input type="text" id="job-role-input" placeholder="e.g. Frontend Developer" />
         </div>
         <div class="analysis-item">
-          <div class="analysis-item-title">Max File Size</div>
+          <div class="analysis-item-title">Job Description</div>
+          <textarea id="job-description-input" rows="5" placeholder="Paste a role description to power the keyword match and recruiter analysis"></textarea>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-title">What you get</div>
           <div class="analysis-item-value" style="color: var(--color-text-secondary); font-size: var(--font-base);">
-            5 MB
+            ATS scoring, AI review, section analysis, keyword matching, rewrite suggestions, and recruiter insights.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Analysis Results -->
+    <div class="history-card" id="resume-history-panel">
+      <div class="history-card-title">Recent Resume Analyses</div>
+      <div class="history-list" id="resume-history-list"></div>
+    </div>
+
     <div class="analysis-results"></div>
 
       </main>

@@ -177,7 +177,14 @@ class APIClient {
       const url = this.buildURL(endpoint);
       const formData = new FormData();
       const fieldName = options.fieldName || 'file';
+      const metadata = options.metadata || {};
       formData.append(fieldName, file);
+
+      Object.entries(metadata).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          formData.append(key, String(value));
+        }
+      });
 
       const headers = { Authorization: `Bearer ${this.getToken()}` };
 
@@ -261,8 +268,8 @@ class APIClient {
      RESUME ENDPOINTS
      ============================================ */
 
-  async uploadResume(file) {
-    return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume' });
+  async uploadResume(file, metadata = {}) {
+    return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume', metadata });
   }
 
   // analyzeResume removed — upload returns analysis directly from server
