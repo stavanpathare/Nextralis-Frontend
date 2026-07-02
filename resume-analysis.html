@@ -8,11 +8,46 @@
 <link rel="icon" type="image/png" href="/Icons/resume.png">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/resume.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/responsive.css" />
   </head>
   <body class="resume-container">
-    <!-- Header -->
-    <div class="resume-header">
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">Nextralis</div>
+        </div>
+        <nav class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <a href="dashboard.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="resume-analysis.html" class="sidebar-nav-link active">
+              <span class="sidebar-nav-icon">📄</span>
+              Resume
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="voice-interview.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">🎤</span>
+              Interview
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="profile.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">👤</span>
+              Profile
+            </a>
+          </li>
+        </nav>
+      </aside>
+
+      <main class="dashboard-main">
+        <!-- Header -->
+        <div class="resume-header">
       <h1>Resume Analyzer</h1>
       <p>Upload your resume and get detailed ATS analysis and improvement suggestions</p>
     </div>
@@ -55,6 +90,9 @@
 
     <!-- Analysis Results -->
     <div class="analysis-results"></div>
+
+      </main>
+    </div>
 
     <footer>
       <p>&copy; 2026 Created by <a href="http://stavanlabs.is-a.dev" class="stavan-labs" target="_blank">Stavan Labs</a>. All rights reserved.</p>

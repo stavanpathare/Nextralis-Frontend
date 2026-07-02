@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="/Icons/interview.png">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/interview.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/responsive.css" />
     <style>
       .results-container { max-width: 1280px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl); }
@@ -42,7 +43,41 @@
     </style>
   </head>
   <body>
-    <div class="results-container">
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">Nextralis</div>
+        </div>
+        <nav class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <a href="dashboard.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="resume-analysis.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📄</span>
+              Resume
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="voice-interview.html" class="sidebar-nav-link active">
+              <span class="sidebar-nav-icon">🎤</span>
+              Interview
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="profile.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">👤</span>
+              Profile
+            </a>
+          </li>
+        </nav>
+      </aside>
+
+      <main class="dashboard-main">
+        <div class="results-container">
       <div class="results-header">
         <h1>Interview Completed! 🎉</h1>
         <p>Here is your detailed performance analysis</p>
@@ -121,6 +156,9 @@
         <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
         <button class="btn btn-ghost" onclick="window.print()">Print Report</button>
       </div>
+    </div>
+
+      </main>
     </div>
 
     <footer>

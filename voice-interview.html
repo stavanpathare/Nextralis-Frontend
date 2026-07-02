@@ -8,11 +8,46 @@
 <link rel="icon" type="image/png" href="/Icons/voice.png">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/interview.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/responsive.css" />
   </head>
   <body>
-    <!-- Interview Setup Section -->
-    <div id="interview-setup" class="interview-container">
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">Nextralis</div>
+        </div>
+        <nav class="sidebar-nav">
+          <li class="sidebar-nav-item">
+            <a href="dashboard.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="resume-analysis.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">📄</span>
+              Resume
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="voice-interview.html" class="sidebar-nav-link active">
+              <span class="sidebar-nav-icon">🎤</span>
+              Interview
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="profile.html" class="sidebar-nav-link">
+              <span class="sidebar-nav-icon">👤</span>
+              Profile
+            </a>
+          </li>
+        </nav>
+      </aside>
+
+      <main class="dashboard-main">
+        <!-- Interview Setup Section -->
+        <div id="interview-setup" class="interview-container">
       <div class="interview-header">
         <h1>AI-Powered Interview Practice</h1>
         <p>Customize your interview settings and get started</p>
@@ -206,6 +241,9 @@
           <div class="previous-list"></div>
         </div>
       </div>
+    </div>
+
+      </main>
     </div>
 
     <footer>
