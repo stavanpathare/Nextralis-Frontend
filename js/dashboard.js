@@ -242,8 +242,8 @@ class Dashboard {
         <td>${UIHelper.formatDate(resume.uploadDate || resume.createdAt)}</td>
         <td>${resume.atsScore || 'N/A'}</td>
         <td>
-          <span class="table-status ${resume.status === 'completed' ? 'completed' : 'pending'}">
-            ${resume.status || 'pending'}
+          <span class="table-status completed">
+            completed
           </span>
         </td>
         <td>
