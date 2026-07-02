@@ -110,33 +110,48 @@
     <!-- Live Interview Section -->
     <div id="interview-live" class="interview-container" style="display: none;">
       <div class="interview-main">
-        <!-- AI Status -->
         <div class="ai-indicator">
           <div class="ai-status">
             <div class="ai-dot"></div>
             <span class="ai-status-text">Nextralis Active</span>
           </div>
+          <div class="status-pill">Ready</div>
         </div>
 
-        <!-- Current Question -->
-        <div class="interview-question">
-          <div class="interview-question-label">Question</div>
+        <div class="interview-question-card">
+          <div class="interview-question-label">Current Question</div>
           <div class="interview-question-text">Loading question...</div>
         </div>
 
-        <!-- User Transcript -->
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Elapsed</div>
+            <div class="metric-value" id="elapsed-time">00:00</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Question Timer</div>
+            <div class="metric-value" id="question-timer">00:00</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Progress</div>
+            <div class="metric-value" id="progress-percent">0%</div>
+          </div>
+        </div>
+
+        <div class="conversation-panel">
+          <div class="transcript-label">Conversation</div>
+          <div class="conversation-feed"></div>
+        </div>
+
         <div class="interview-transcript">
-          <div class="transcript-label">Your Answer</div>
+          <div class="transcript-label">Live Transcript</div>
           <div class="transcript-text transcript-empty">Your answer will appear here as you speak...</div>
         </div>
 
-        <!-- Microphone Widget -->
         <div class="microphone-widget">
           <div class="microphone-icon">🎤</div>
           <div class="microphone-status">Ready</div>
-          <div class="microphone-message">Click "Start Recording" when ready</div>
-
-          <!-- Waveform -->
+          <div class="microphone-message">The interview will continue automatically after each answer.</div>
           <div class="waveform" id="waveform">
             <div class="waveform-bar"></div>
             <div class="waveform-bar"></div>
@@ -146,28 +161,18 @@
           </div>
         </div>
 
-        <!-- Controls -->
         <div class="interview-controls">
-          <button type="button" class="btn btn-primary btn-interview" id="btn-start-recording">
-            Start Recording
-          </button>
-          <button type="button" class="btn btn-secondary btn-mute" id="btn-mute">
-            Mute
-          </button>
-          <button type="button" class="btn btn-ghost btn-stop" id="btn-stop-recording">
-            Stop & Submit
-          </button>
-          <button type="button" class="btn btn-danger btn-exit" id="btn-exit-interview">
-            Exit Interview
-          </button>
+          <button type="button" class="btn btn-primary btn-interview" id="btn-start-recording">Start Recording</button>
+          <button type="button" class="btn btn-secondary btn-mute" id="btn-mute">Mute</button>
+          <button type="button" class="btn btn-ghost btn-stop" id="btn-stop-recording">Stop & Submit</button>
+          <button type="button" class="btn btn-danger btn-exit" id="btn-exit-interview">End Interview</button>
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="interview-sidebar">
-        <!-- Progress Widget -->
         <div class="progress-widget">
-          <div class="progress-widget-title">Question Progress</div>
+          <div class="progress-widget-title">Interview Progress</div>
+          <div class="progress-meta" id="question-counter">Question 1 / 10</div>
           <div class="progress-questions">
             <div class="progress-item current">1</div>
             <div class="progress-item pending">2</div>
@@ -182,12 +187,9 @@
           </div>
         </div>
 
-        <!-- Previous Questions -->
         <div class="previous-questions">
-          <div class="previous-questions-title">Questions Asked</div>
-          <div style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-tertiary);">
-            No questions yet
-          </div>
+          <div class="previous-questions-title">Recent Feedback</div>
+          <div class="previous-list"></div>
         </div>
       </div>
     </div>

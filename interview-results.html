@@ -10,279 +10,116 @@
     <link rel="stylesheet" href="css/interview.css" />
     <link rel="stylesheet" href="css/responsive.css" />
     <style>
-      .results-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: var(--spacing-2xl) var(--spacing-xl);
-      }
-
-      .results-header {
-        text-align: center;
-        margin-bottom: var(--spacing-2xl);
-        animation: slide-up 0.6s ease-out;
-      }
-
-      .results-header h1 {
-        font-size: var(--font-4xl);
-        margin-bottom: var(--spacing-md);
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .results-header p {
-        color: var(--color-text-secondary);
-        font-size: var(--font-lg);
-      }
-
-      .score-summary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--spacing-lg);
-        margin-bottom: var(--spacing-2xl);
-      }
-
-      .score-display {
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-2xl);
-        text-align: center;
-      }
-
-      .score-circle {
-        position: relative;
-        width: 150px;
-        height: 150px;
-        margin: 0 auto var(--spacing-lg);
-      }
-
-      .score-circle svg {
-        transform: rotate(-90deg);
-      }
-
-      .score-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-      }
-
-      .score-number {
-        font-size: var(--font-4xl);
-        font-weight: 700;
-        color: var(--color-neon-blue);
-      }
-
-      .score-label {
-        font-size: var(--font-sm);
-        color: var(--color-text-secondary);
-      }
-
-      .results-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-xl);
-        margin-bottom: var(--spacing-2xl);
-      }
-
-      .result-box {
-        background: rgba(26, 31, 58, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-xl);
-      }
-
-      .result-box-title {
-        font-size: var(--font-xl);
-        font-weight: 700;
-        margin-bottom: var(--spacing-lg);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-md);
-      }
-
-      .result-list {
-        list-style: none;
-      }
-
-      .result-item {
-        padding: var(--spacing-md);
-        background: rgba(255, 255, 255, 0.05);
-        border-left: 3px solid var(--color-neon-blue);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--spacing-md);
-      }
-
-      .result-item.positive {
-        border-left-color: #86efac;
-        background: rgba(34, 197, 94, 0.05);
-      }
-
-      .result-item.negative {
-        border-left-color: #fca5a5;
-        background: rgba(239, 68, 68, 0.05);
-      }
-
-      .result-item-title {
-        font-weight: 600;
-        color: var(--color-text-primary);
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .result-item-description {
-        font-size: var(--font-sm);
-        color: var(--color-text-secondary);
-      }
-
-      .actions {
-        display: flex;
-        gap: var(--spacing-lg);
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .actions .btn {
-        min-width: 200px;
-      }
-
-      @media (max-width: 768px) {
-        .results-header h1 {
-          font-size: var(--font-3xl);
-        }
-
-        .results-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .actions {
-          flex-direction: column;
-        }
-
-        .actions .btn {
-          width: 100%;
-        }
-      }
+      .results-container { max-width: 1280px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl); }
+      .results-header { text-align: center; margin-bottom: var(--spacing-2xl); animation: slide-up 0.6s ease-out; }
+      .results-header h1 { font-size: var(--font-4xl); margin-bottom: var(--spacing-md); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .results-header p { color: var(--color-text-secondary); font-size: var(--font-lg); }
+      .score-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl); }
+      .score-display, .result-box, .timeline-card, .transcript-card { background: rgba(26, 31, 58, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg); padding: var(--spacing-xl); box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2); }
+      .score-circle { position: relative; width: 150px; height: 150px; margin: 0 auto var(--spacing-lg); }
+      .score-circle svg { transform: rotate(-90deg); }
+      .score-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+      .score-number { font-size: var(--font-4xl); font-weight: 700; color: var(--color-neon-blue); }
+      .score-label { font-size: var(--font-sm); color: var(--color-text-secondary); }
+      .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl); margin-bottom: var(--spacing-2xl); }
+      .result-box-title { font-size: var(--font-xl); font-weight: 700; margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-md); }
+      .result-list { list-style: none; display: flex; flex-direction: column; gap: var(--spacing-md); }
+      .result-item { padding: var(--spacing-md); background: rgba(255, 255, 255, 0.05); border-left: 3px solid var(--color-neon-blue); border-radius: var(--radius-md); }
+      .result-item.positive { border-left-color: #86efac; background: rgba(34, 197, 94, 0.05); }
+      .result-item.negative { border-left-color: #fca5a5; background: rgba(239, 68, 68, 0.05); }
+      .result-item-title { font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--spacing-xs); }
+      .result-item-description { font-size: var(--font-sm); color: var(--color-text-secondary); }
+      .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-xl); }
+      .meta-item { padding: var(--spacing-md); background: rgba(255,255,255,0.04); border-radius: var(--radius-md); }
+      .meta-label { font-size: var(--font-xs); text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 0.25rem; }
+      .meta-value { color: var(--color-text-primary); font-weight: 600; }
+      .actions { display: flex; gap: var(--spacing-lg); flex-wrap: wrap; justify-content: center; margin-top: var(--spacing-2xl); }
+      .actions .btn { min-width: 200px; }
+      .transcript-card { margin-top: var(--spacing-xl); }
+      .transcript-entry { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+      .transcript-entry:last-child { border-bottom: none; }
+      @media (max-width: 768px) { .results-header h1 { font-size: var(--font-3xl); } .results-grid { grid-template-columns: 1fr; } .actions { flex-direction: column; } .actions .btn { width: 100%; } }
     </style>
   </head>
   <body>
     <div class="results-container">
-      <!-- Header -->
       <div class="results-header">
         <h1>Interview Completed! 🎉</h1>
-        <p>Here's your detailed performance analysis</p>
+        <p>Here is your detailed performance analysis</p>
       </div>
 
-      <!-- Score Summary -->
       <div class="score-summary">
         <div class="score-display">
           <div class="score-circle">
             <div class="score-text">
-              <div class="score-number" id="total-score">85</div>
+              <div class="score-number" id="total-score">0</div>
               <div class="score-label">Overall Score</div>
             </div>
             <svg width="150" height="150" viewBox="0 0 150 150">
               <circle cx="75" cy="75" r="70" fill="none" stroke="rgba(255, 255, 255, 0.1)" stroke-width="6"></circle>
-              <circle
-                cx="75"
-                cy="75"
-                r="70"
-                fill="none"
-                stroke="url(#gradient)"
-                stroke-width="6"
-                stroke-dasharray="369"
-                stroke-dashoffset="55"
-                stroke-linecap="round"
-              ></circle>
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color: #a855f7; stop-opacity: 1" />
-                  <stop offset="100%" style="stop-color: #ec4899; stop-opacity: 1" />
-                </linearGradient>
-              </defs>
+              <circle cx="75" cy="75" r="70" fill="none" stroke="url(#gradient)" stroke-width="6" stroke-dasharray="369" stroke-dashoffset="369" stroke-linecap="round" id="score-ring"></circle>
+              <defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color: #a855f7; stop-opacity: 1" /><stop offset="100%" style="stop-color: #ec4899; stop-opacity: 1" /></linearGradient></defs>
             </svg>
           </div>
         </div>
-
         <div class="score-display">
-          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="communication-score">82</div>
-          <div class="score-label">Communication Score</div>
+          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="communication-score">0</div>
+          <div class="score-label">Communication</div>
         </div>
-
         <div class="score-display">
-          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="technical-score">88</div>
-          <div class="score-label">Technical Score</div>
+          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="technical-score">0</div>
+          <div class="score-label">Technical</div>
+        </div>
+        <div class="score-display">
+          <div class="score-number" style="font-size: var(--font-2xl); color: var(--color-neon-blue);" id="problem-solving-score">0</div>
+          <div class="score-label">Problem Solving</div>
         </div>
       </div>
 
-      <!-- Results Grid -->
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value" id="role">-</div></div>
+        <div class="meta-item"><div class="meta-label">Difficulty</div><div class="meta-value" id="difficulty">-</div></div>
+        <div class="meta-item"><div class="meta-label">Interview Type</div><div class="meta-value" id="interview-type">-</div></div>
+        <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-value" id="duration">-</div></div>
+        <div class="meta-item"><div class="meta-label">Questions Answered</div><div class="meta-value" id="question-count">-</div></div>
+        <div class="meta-item"><div class="meta-label">Recommendation</div><div class="meta-value" id="recommendation">-</div></div>
+      </div>
+
       <div class="results-grid">
-        <!-- Strengths -->
         <div class="result-box">
-          <div class="result-box-title">
-            <span>✅</span>
-            <span>Your Strengths</span>
-          </div>
-          <ul class="result-list" id="strengths-list">
-            <li class="result-item positive">
-              <div class="result-item-title">Clear Communication</div>
-              <div class="result-item-description">You expressed your thoughts clearly and concisely</div>
-            </li>
-            <li class="result-item positive">
-              <div class="result-item-title">Technical Knowledge</div>
-              <div class="result-item-description">Strong understanding of core concepts demonstrated</div>
-            </li>
-          </ul>
+          <div class="result-box-title"><span>✅</span><span>Your Strengths</span></div>
+          <ul class="result-list" id="strengths-list"></ul>
         </div>
-
-        <!-- Areas to Improve -->
         <div class="result-box">
-          <div class="result-box-title">
-            <span>📈</span>
-            <span>Areas to Improve</span>
-          </div>
-          <ul class="result-list" id="improvements-list">
-            <li class="result-item negative">
-              <div class="result-item-title">Response Time</div>
-              <div class="result-item-description">Try to think through questions a bit faster</div>
-            </li>
-            <li class="result-item negative">
-              <div class="result-item-title">Example Usage</div>
-              <div class="result-item-description">Include more real-world examples in your answers</div>
-            </li>
-          </ul>
+          <div class="result-box-title"><span>📈</span><span>Areas to Improve</span></div>
+          <ul class="result-list" id="improvements-list"></ul>
         </div>
       </div>
 
-      <!-- Recommendations -->
       <div class="result-box" style="margin-bottom: var(--spacing-2xl);">
-        <div class="result-box-title">
-          <span>💡</span>
-          <span>AI Recommendations</span>
-        </div>
-        <ul class="result-list" id="recommendations-list">
-          <li class="result-item">
-            <div class="result-item-title">Practice more behavioral questions</div>
-            <div class="result-item-description">Focus on your storytelling and problem-solving approach</div>
-          </li>
-          <li class="result-item">
-            <div class="result-item-title">Work on system design concepts</div>
-            <div class="result-item-description">Deep dive into scalability and architecture patterns</div>
-          </li>
-          <li class="result-item">
-            <div class="result-item-title">Record practice sessions</div>
-            <div class="result-item-description">Review your responses to identify verbal patterns</div>
-          </li>
-        </ul>
+        <div class="result-box-title"><span>💡</span><span>AI Recommendations</span></div>
+        <ul class="result-list" id="recommendations-list"></ul>
       </div>
 
-      <!-- Actions -->
+      <div class="result-box" style="margin-bottom: var(--spacing-2xl);">
+        <div class="result-box-title"><span>📊</span><span>Performance Chart</span></div>
+        <canvas id="scoreChart" height="140"></canvas>
+      </div>
+
+      <div class="timeline-card">
+        <div class="result-box-title"><span>🧭</span><span>Interview Timeline</span></div>
+        <div id="timeline"></div>
+      </div>
+
+      <div class="transcript-card">
+        <div class="result-box-title"><span>📝</span><span>Interview Transcript</span></div>
+        <div id="transcript-list"></div>
+      </div>
+
       <div class="actions">
         <button class="btn btn-primary" onclick="window.location.href='voice-interview.html'">Take Another Interview</button>
         <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
-        <button class="btn btn-ghost" onclick="window.print()">Download Report</button>
+        <button class="btn btn-ghost" onclick="window.print()">Print Report</button>
       </div>
     </div>
 
@@ -295,25 +132,23 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      // Load interview results
       async function loadResults() {
         try {
           const urlParams = new URLSearchParams(window.location.search);
           const interviewId = urlParams.get('id');
-
           if (!interviewId) {
             UIHelper.error('No interview found');
             return;
           }
 
           UIHelper.showLoading('Loading results...');
-
           const response = await api.getInterviewResult(interviewId);
           const report = response?.data || response;
 
-          if (response.error) {
+          if (response?.error) {
             UIHelper.hideLoading();
             UIHelper.error(response.error);
             return;
@@ -329,58 +164,72 @@
       }
 
       function displayResults(data) {
-        // Update scores
-        document.getElementById('total-score').textContent = Math.round(data.totalScore || 0);
-        document.getElementById('communication-score').textContent = Math.round(data.communicationScore || 0);
-        document.getElementById('technical-score').textContent = Math.round(data.technicalScore || 0);
+        const overall = Math.round(data.finalScore || data.totalScore || data.overallScore || 0);
+        const communication = Math.round(data.communicationScore || 0);
+        const technical = Math.round(data.technicalScore || 0);
+        const problemSolving = Math.round(data.problemSolvingScore || 0);
 
-        // Update strengths
+        document.getElementById('total-score').textContent = overall;
+        document.getElementById('communication-score').textContent = communication;
+        document.getElementById('technical-score').textContent = technical;
+        document.getElementById('problem-solving-score').textContent = problemSolving;
+        document.getElementById('role').textContent = data.role || 'N/A';
+        document.getElementById('difficulty').textContent = data.difficulty || 'N/A';
+        document.getElementById('interview-type').textContent = data.interviewType || 'N/A';
+        document.getElementById('duration').textContent = data.duration ? `${data.duration}s` : 'N/A';
+        document.getElementById('question-count').textContent = data.questions?.length || data.answers?.length || 0;
+        document.getElementById('recommendation').textContent = overall >= 80 ? 'Strong hire signal' : overall >= 60 ? 'Promising progress' : 'Keep practicing';
+
+        const ring = document.getElementById('score-ring');
+        if (ring) {
+          const offset = 369 - (369 * Math.min(100, overall) / 100);
+          ring.style.strokeDashoffset = offset;
+        }
+
         const strengthsList = document.getElementById('strengths-list');
-        if (data.strengths && data.strengths.length > 0) {
-          strengthsList.innerHTML = data.strengths
-            .map(
-              (strength) => `
-            <li class="result-item positive">
-              <div class="result-item-title">${strength.title}</div>
-              <div class="result-item-description">${strength.description}</div>
-            </li>
-          `
-            )
-            .join('');
-        }
-
-        // Update improvements
-        const improvementsList = document.getElementById('improvements-list');
-        if (data.improvements && data.improvements.length > 0) {
-          improvementsList.innerHTML = data.improvements
-            .map(
-              (improvement) => `
-            <li class="result-item negative">
-              <div class="result-item-title">${improvement.title}</div>
-              <div class="result-item-description">${improvement.description}</div>
-            </li>
-          `
-            )
-            .join('');
-        }
-
-        // Update recommendations
+        const weaknessesList = document.getElementById('improvements-list');
         const recommendationsList = document.getElementById('recommendations-list');
-        if (data.recommendations && data.recommendations.length > 0) {
-          recommendationsList.innerHTML = data.recommendations
-            .map(
-              (recommendation) => `
-            <li class="result-item">
-              <div class="result-item-title">${recommendation.title}</div>
-              <div class="result-item-description">${recommendation.description}</div>
-            </li>
-          `
-            )
-            .join('');
+        const transcriptList = document.getElementById('transcript-list');
+        const timeline = document.getElementById('timeline');
+
+        const strengths = Array.isArray(data.strengths) && data.strengths.length ? data.strengths : ['Clear communication', 'Solid structure'];
+        const weaknesses = Array.isArray(data.weaknesses) && data.weaknesses.length ? data.weaknesses : ['More concrete examples', 'Stronger edge-case reasoning'];
+        const recommendations = Array.isArray(data.feedback?.recommendations) && data.feedback.recommendations.length ? data.feedback.recommendations : ['Practice with realistic follow-up questions', 'Record yourself and refine delivery'];
+
+        strengthsList.innerHTML = strengths.map((item) => `<li class="result-item positive"><div class="result-item-title">${item}</div></li>`).join('');
+        weaknessesList.innerHTML = weaknesses.map((item) => `<li class="result-item negative"><div class="result-item-title">${item}</div></li>`).join('');
+        recommendationsList.innerHTML = recommendations.map((item) => `<li class="result-item"><div class="result-item-title">${item}</div></li>`).join('');
+
+        const transcriptEntries = Array.isArray(data.transcript) && data.transcript.length ? data.transcript : [];
+        transcriptList.innerHTML = transcriptEntries.length
+          ? transcriptEntries.map((entry) => `<div class="transcript-entry"><strong>${entry.role === 'assistant' ? 'AI' : 'You'}:</strong> ${entry.message}</div>`).join('')
+          : '<div class="result-item-description">No transcript available.</div>';
+
+        const timelineEntries = Array.isArray(data.feedback?.evaluations) && data.feedback.evaluations.length ? data.feedback.evaluations : [];
+        timeline.innerHTML = timelineEntries.length
+          ? timelineEntries.map((entry, index) => `<div class="result-item"><div class="result-item-title">Answer ${index + 1}</div><div class="result-item-description">${entry?.finalSummary || entry?.finalReport || 'Nice progress'}</div></div>`).join('')
+          : '<div class="result-item-description">Interview timeline will appear here once more responses are recorded.</div>';
+
+        if (window.Chart) {
+          const ctx = document.getElementById('scoreChart');
+          if (ctx) {
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Overall', 'Technical', 'Communication', 'Problem Solving'],
+                datasets: [{
+                  label: 'Scores',
+                  data: [overall, technical, communication, problemSolving],
+                  backgroundColor: ['#8b5cf6', '#38bdf8', '#22c55e', '#f59e0b'],
+                  borderRadius: 8,
+                }]
+              },
+              options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+          }
         }
       }
 
-      // Load results when page is ready
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadResults);
       } else {

@@ -8,25 +8,25 @@ class VoiceInterview {
     this.currentQuestion = null;
     this.answers = [];
     this.isListening = false;
+    this.isSpeaking = false;
     this.questionCount = 0;
     this.maxQuestions = CONFIG.INTERVIEW.MAX_QUESTIONS;
-
-    // Speech recognition setup (initialized later)
+    this.currentAnswer = '';
+    this.transcript = [];
+    this.status = 'idle';
+    this.sessionStartedAt = null;
+    this.elapsedTimer = null;
+    this.questionTimer = null;
     this.recognition = null;
     this.recognitionSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-
     this.submitting = false;
-    this.speaking = false;
-
-    // Speech synthesis setup
     this.synthesis = window.speechSynthesis;
-
+    this.isMuted = false;
+    this.pendingSpeech = null;
     this.init();
   }
 
   async init() {
-    console.log('[voice] init: page loaded');
-    // Check authentication
     if (!authManager.isAuthenticated()) {
       window.location.href = 'login.html';
       return;
@@ -52,23 +52,14 @@ class VoiceInterview {
     }
   }
 
-  /**
-   * Setup event listeners for setup page
-   */
   setupEventListeners() {
     const startBtn = document.getElementById('btn-start-interview');
     if (startBtn && !startBtn.dataset.listenerAttached) {
-      startBtn.addEventListener('click', (e) => {
-        console.log('[voice] Start button clicked');
-        this.startInterview(e);
-      });
+      startBtn.addEventListener('click', () => this.startInterview());
       startBtn.dataset.listenerAttached = 'true';
     }
   }
 
-  /**
-   * Start interview
-   */
   async startInterview() {
     const startBtn = document.getElementById('btn-start-interview');
     const jobRole = document.getElementById('job-role')?.value;
@@ -83,81 +74,63 @@ class VoiceInterview {
 
     if (startBtn) {
       startBtn.disabled = true;
-      startBtn.classList.add('loading');
     }
 
-    UIHelper.showLoading('Generating interview...');
-    console.log('[voice] startInterview - request body', { role: jobRole, experienceLevel, interviewType, difficulty });
+    UIHelper.showLoading('Preparing your interview...');
 
     try {
-      const body = {
+      const response = await api.post(CONFIG.ENDPOINTS.START_INTERVIEW, {
         role: jobRole,
         experienceLevel,
         interviewType,
         difficulty,
-      };
+      });
 
-      const response = await api.post(CONFIG.ENDPOINTS.START_INTERVIEW, body);
-      console.log('[voice] startInterview - response', response);
-
-      if (response.error) {
+      if (response?.error) {
         UIHelper.hideLoading();
         UIHelper.error(response.error);
         if (startBtn) startBtn.disabled = false;
         return;
       }
 
-      const interviewId = response.interviewId || response.id || response._id || response.data?.interviewId || response.data?.id;
+      const interviewId = response.interviewId || response.data?.interviewId || response.id || response._id;
       const interviewSession = { interviewId, meta: response };
       localStorage.setItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION, JSON.stringify(interviewSession));
       this.interviewSession = interviewSession;
+      this.sessionStartedAt = Date.now();
+      this.questionCount = 1;
+      this.transcript = response.transcript || response.data?.transcript || [];
+      this.currentQuestion = response.question || response.data?.question || response.data?.assistantMessage || '';
+      this.currentAnswer = '';
 
       UIHelper.hideLoading();
 
-      // Transition UI without full redirect
       const setupSection = document.getElementById('interview-setup');
       const liveSection = document.getElementById('interview-live');
       if (setupSection) setupSection.style.display = 'none';
       if (liveSection) liveSection.style.display = 'flex';
 
       this.setupInterviewUI();
-
-      // Render first question if provided
-      let firstQuestion = response.firstQuestion || response.question || response.data?.firstQuestion || response.data?.question || response.data?.data?.question;
-      if (firstQuestion) {
-        // Normalize string responses to object shape
-        if (typeof firstQuestion === 'string') {
-          firstQuestion = { question: firstQuestion };
-        }
-        this.currentQuestion = firstQuestion;
-        this.questionCount = 1;
-        // this.questionCount++;
-        this.displayQuestion(firstQuestion);
-        this.speakQuestion(firstQuestion.question || firstQuestion.text || firstQuestion.prompt || '');
-      } else {
-        // Backend does not expose a separate question endpoint; wait for answer call to return next question
-        console.warn('[voice] No initial question returned by start; waiting for server-driven flow');
-      }
+      this.updateProgressUI();
+      this.renderTranscript();
+      this.startTimers();
+      this.setStatus('speaking');
+      this.displayQuestion(this.currentQuestion);
+      await this.speakAndWait(this.currentQuestion);
+      this.setStatus('listening');
+      this.enableMic();
     } catch (error) {
       console.error('[voice] Error starting interview:', error);
       UIHelper.hideLoading();
       UIHelper.error('Failed to start interview');
       if (startBtn) startBtn.disabled = false;
-    } finally {
-      if (startBtn) {
-        startBtn.classList.remove('loading');
-      }
     }
   }
 
-  /**
-   * Load interview session
-   */
   async loadInterviewSession() {
     try {
       const sessionJson = localStorage.getItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
       if (!sessionJson) {
-        // no session; go back to setup
         const setupSection = document.getElementById('interview-setup');
         const liveSection = document.getElementById('interview-live');
         if (setupSection) setupSection.style.display = 'block';
@@ -167,27 +140,25 @@ class VoiceInterview {
 
       this.interviewSession = JSON.parse(sessionJson);
       this.setupInterviewUI();
-      // If session meta contains a last question, display it; otherwise wait for answer-driven flow
+      this.updateProgressUI();
       const meta = this.interviewSession.meta || {};
-      let storedQuestion = meta.firstQuestion || meta.question || meta.data?.question || meta.data?.firstQuestion;
+      const storedQuestion = meta.question || meta.data?.question || meta.assistantMessage || meta.data?.assistantMessage || '';
       if (storedQuestion) {
-        if (typeof storedQuestion === 'string') storedQuestion = { question: storedQuestion };
         this.currentQuestion = storedQuestion;
         this.displayQuestion(storedQuestion);
       }
-
-      this.setupSpeechRecognition();
+      this.renderTranscript();
+      this.startTimers();
+      if (!this.recognitionSupported) {
+        UIHelper.warning('Speech recognition is not supported in this browser.');
+      }
     } catch (error) {
       console.error('Error loading interview:', error);
       UIHelper.error('Failed to load interview');
     }
   }
 
-  /**
-   * Setup interview UI
-   */
   setupInterviewUI() {
-    // Setup controls
     const startBtn = document.getElementById('btn-start-recording');
     const stopBtn = document.getElementById('btn-stop-recording');
     const muteBtn = document.getElementById('btn-mute');
@@ -213,34 +184,30 @@ class VoiceInterview {
       exitBtn.dataset.listenerAttached = 'true';
     }
 
-    // Progress indicators
-    this.updateProgressUI();
-
-    // Speech recognition initialization
     this.setupSpeechRecognition();
+    this.updateProgressUI();
+    this.renderTranscript();
+    this.updateStatusUI();
   }
 
-  /**
-   * Setup speech recognition
-   */
   setupSpeechRecognition() {
     if (!this.recognitionSupported) {
-      console.warn('[voice] SpeechRecognition not supported in this browser');
       return;
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!this.recognition) {
       this.recognition = new SpeechRecognition();
-      this.recognition.continuous = true;
+      this.recognition.continuous = false;
       this.recognition.interimResults = true;
       this.recognition.lang = 'en-US';
     }
 
     this.recognition.onstart = () => {
-      console.log('[voice] Speech recognition started');
       this.isListening = true;
+      this.setStatus('listening');
       this.updateMicrophoneStatus('Listening...');
+      this.setMicButtonState(true);
     };
 
     this.recognition.onresult = (event) => {
@@ -248,13 +215,8 @@ class VoiceInterview {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript;
       }
-
-      const transcriptElement = document.querySelector('.transcript-text');
-      if (transcriptElement) {
-        transcriptElement.textContent = transcript;
-        transcriptElement.classList.remove('transcript-empty');
-      }
-
+      this.currentAnswer = transcript.trim();
+      this.showLiveTranscript(transcript.trim());
       if (event.results[event.results.length - 1].isFinal) {
         this.currentAnswer = transcript.trim();
       }
@@ -262,117 +224,123 @@ class VoiceInterview {
 
     this.recognition.onerror = (event) => {
       console.error('[voice] Speech recognition error:', event.error);
-      UIHelper.error('Microphone error: ' + (event.error || 'unknown'));
       this.isListening = false;
-      this.updateMicrophoneStatus('Error');
+      this.setMicButtonState(false);
+      this.updateMicrophoneStatus('Ready');
+      if (event.error === 'not-allowed') {
+        UIHelper.error('Microphone access was denied. Please allow microphone access and try again.');
+      } else {
+        UIHelper.warning('Voice input interrupted. You can try again.');
+      }
     };
 
     this.recognition.onend = () => {
-      console.log('[voice] Speech recognition ended');
       this.isListening = false;
+      this.setMicButtonState(false);
       this.updateMicrophoneStatus('Ready');
+      if (this.currentAnswer && !this.submitting) {
+        this.submitAnswer();
+      }
     };
   }
 
-  /**
-   * Get next question
-   */
-  async getNextQuestion() {
-    if (this.questionCount >= this.maxQuestions) {
-      await this.endInterview();
-      return;
-    }
-
-    try {
-      UIHelper.showLoading('Getting next question...');
-
-      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
-      console.log('[voice] getNextQuestion - interviewId', interviewId, 'questionCount', this.questionCount);
-
-      // Backend does not expose a standalone "get question" endpoint.
-      // Questions are returned by POST /interview/start (first question) and POST /interview/answer (next question).
-      console.warn('[voice] getNextQuestion: no dedicated endpoint available; use answer flow to receive next question');
-      UIHelper.hideLoading();
-      return;
-    } catch (error) {
-      console.error('Error getting question:', error);
-      UIHelper.hideLoading();
-      UIHelper.error('Failed to get question');
-    }
+  setStatus(status) {
+    this.status = status;
+    this.updateStatusUI();
   }
 
-  /**
-   * Display question
-   */
-  displayQuestion(questionData) {
-    console.log('[voice] displayQuestion received:', questionData);
+  updateStatusUI() {
+    const statusText = document.querySelector('.ai-status-text');
+    const dot = document.querySelector('.ai-dot');
+    const label = document.querySelector('.microphone-status');
+    const message = document.querySelector('.microphone-message');
+    const indicator = document.querySelector('.status-pill');
 
-    const questionElement = document.querySelector('.interview-question-text');
-    let qText = '';
-    if (typeof questionData === 'string') {
-      qText = questionData;
-    } else if (questionData) {
-      qText = questionData.question || questionData.text || questionData.prompt || '';
-    }
-    if (questionElement) {
-      questionElement.textContent = qText;
-    }
-
-    // Clear transcript
-    const transcriptElement = document.querySelector('.transcript-text');
-    if (transcriptElement) {
-      transcriptElement.textContent = '';
-      transcriptElement.classList.add('transcript-empty');
-    }
-
-    this.currentAnswer = '';
-  }
-
-  /**
-   * Speak question
-   */
-  speakQuestion(text) {
-  console.log('[voice] speakQuestion called:', text);
-
-  if (!this.synthesis || !text) {
-    console.error('[voice] Cannot speak. Empty text.');
-    return;
-  }
-
-  try {
-    this.synthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    utterance.onstart = () => {
-      console.log('[voice] Speech started');
+    const meta = {
+      idle: { text: 'Ready', icon: '●', dotClass: 'ready' },
+      speaking: { text: 'AI is speaking...', icon: '🗣', dotClass: 'speaking' },
+      listening: { text: 'Listening...', icon: '🎤', dotClass: 'listening' },
+      thinking: { text: 'AI is analyzing...', icon: '🧠', dotClass: 'thinking' },
+      generating: { text: 'Preparing next question...', icon: '✨', dotClass: 'generating' },
     };
 
-    utterance.onend = () => {
-      console.log('[voice] Speech ended');
-    };
+    const state = meta[this.status] || meta.idle;
 
-    utterance.onerror = (e) => {
-      console.error('[voice] Speech error', e);
-    };
-
-    this.synthesis.speak(utterance);
-
-  } catch (e) {
-    console.error('[voice] TTS error', e);
+    if (statusText) {
+      statusText.textContent = `${state.icon} ${state.text}`;
+    }
+    if (dot) {
+      dot.className = `ai-dot ${state.dotClass}`;
+    }
+    if (label) {
+      label.textContent = state.text;
+    }
+    if (message) {
+      message.textContent = this.status === 'listening' ? 'Speak naturally. We will submit your answer automatically.' : 'The interview will continue automatically.';
+    }
+    if (indicator) {
+      indicator.textContent = state.text;
+      indicator.className = `status-pill ${state.dotClass}`;
+    }
   }
-}
 
-  /**
-   * Start listening
-   */
+  startTimers() {
+    this.clearTimers();
+    this.sessionStartedAt = Date.now();
+    this.elapsedTimer = setInterval(() => this.updateTimers(), 1000);
+    this.questionTimer = setInterval(() => this.updateQuestionTimer(), 1000);
+  }
+
+  clearTimers() {
+    if (this.elapsedTimer) clearInterval(this.elapsedTimer);
+    if (this.questionTimer) clearInterval(this.questionTimer);
+  }
+
+  updateTimers() {
+    const elapsed = Math.floor((Date.now() - this.sessionStartedAt) / 1000);
+    const elapsedElement = document.getElementById('elapsed-time');
+    const totalElement = document.getElementById('total-time');
+    if (elapsedElement) elapsedElement.textContent = this.formatDuration(elapsed);
+    if (totalElement) totalElement.textContent = this.formatDuration(elapsed);
+  }
+
+  updateQuestionTimer() {
+    const timer = document.getElementById('question-timer');
+    if (timer) {
+      const seconds = Number(timer.dataset.seconds || 0) + 1;
+      timer.dataset.seconds = seconds;
+      timer.textContent = this.formatDuration(seconds);
+    }
+  }
+
+  formatDuration(seconds) {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    return `${mins}:${secs}`;
+  }
+
+  enableMic() {
+    const startBtn = document.getElementById('btn-start-recording');
+    if (startBtn) {
+      startBtn.disabled = false;
+    }
+    this.setMicButtonState(false);
+    if (this.recognitionSupported && this.recognition && !this.isListening) {
+      this.startListening();
+    }
+  }
+
+  setMicButtonState(isActive) {
+    const startBtn = document.getElementById('btn-start-recording');
+    if (startBtn) {
+      startBtn.classList.toggle('is-active', isActive);
+      startBtn.disabled = isActive;
+    }
+  }
+
   startListening() {
     if (!this.recognitionSupported) {
-      UIHelper.error('Speech recognition not supported in this browser');
+      UIHelper.error('Speech recognition is not supported in this browser.');
       return;
     }
 
@@ -380,260 +348,115 @@ class VoiceInterview {
 
     try {
       this.recognition.start();
-      const startBtn = document.getElementById('btn-start-recording');
-      if (startBtn) startBtn.disabled = true;
-      console.log('[voice] startListening');
-    } catch (e) {
-      console.error('[voice] startListening error', e);
+    } catch (error) {
+      console.warn('[voice] recognition already started', error);
+      this.isListening = false;
     }
   }
 
-  /**
-   * Stop listening
-   */
   async stopListening() {
     if (this.recognition && this.isListening) {
-      try {
-        this.recognition.stop();
-      } catch (e) {
-        console.warn('[voice] recognition.stop error', e);
-      }
+      this.recognition.stop();
+      return;
     }
-
-    this.isListening = false;
-
-    const startBtn = document.getElementById('btn-start-recording');
-    if (startBtn) startBtn.disabled = false;
-
-    // Submit answer
     await this.submitAnswer();
   }
 
-  /**
-   * Submit answer
-   */
-  async submitAnswer() {
-    const answerText = (this.currentAnswer || '').trim();
-    if (!answerText) {
-      UIHelper.warning('Please provide an answer');
-      return;
-    }
+  async speakAndWait(text) {
+    if (!text) return;
+    this.isSpeaking = true;
+    this.setStatus('speaking');
+    await this.speakText(text);
+    this.isSpeaking = false;
+    this.setStatus('idle');
+  }
 
-    if (this.submitting) {
-      console.log('[voice] submitAnswer: already submitting, ignoring');
-      return;
-    }
-
-    this.submitting = true;
-    UIHelper.showLoading('Evaluating answer...');
-
-    try {
-      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
-      console.log('[voice] submitAnswer - interviewId, answerText', interviewId, answerText);
-
-      const body = { interviewId, answerText };
-      const response = await api.post(CONFIG.ENDPOINTS.SUBMIT_ANSWER, body);
-      console.log('[voice] submitAnswer - response', response);
-
-      if (response.error) {
-        UIHelper.hideLoading();
-        UIHelper.error(response.error);
+  speakText(text) {
+    return new Promise((resolve) => {
+      if (!this.synthesis || !text) {
+        resolve();
         return;
       }
 
-      // Append evaluation to answers list
-      const evaluation = response.evaluation || response.data?.evaluation || response.evaluationSummary || null;
-      const score = response.score || response.data?.score || null;
-      this.answers.push({ question: this.currentQuestion, answer: answerText, evaluation, score });
-
-      // Render evaluation in UI
-      this.renderEvaluation({ question: this.currentQuestion, answer: answerText, evaluation, score });
-
-      // Check for next question or final report
-      // Support common server shapes: response.data.question and response.data.finalReport
-      const nextQuestion = response.nextQuestion || response.question || response.data?.nextQuestion || response.data?.question || response.data?.data?.question;
-      const finalReport = response.finalReport || response.data?.finalReport || response.data?.report || response.report || response.data?.data?.finalReport;
-
-      UIHelper.hideLoading();
-
-      if (nextQuestion) {
-
-        const normalizedQuestion =
-          typeof nextQuestion === 'string'
-            ? { question: nextQuestion }
-            : nextQuestion;
-
-        this.currentQuestion = normalizedQuestion;
-
-        this.displayQuestion(normalizedQuestion);
-
-        const questionText =
-          normalizedQuestion.question ||
-          normalizedQuestion.text ||
-          normalizedQuestion.prompt ||
-          '';
-
-        console.log('[voice] Next question:', questionText);
-
-        this.speakQuestion(questionText);
-
-        this.questionCount++;
-
-        this.updateProgressUI();
-      } else if (finalReport) {
-        // End interview and redirect
-        await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
-        localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
-        window.location.href = `/interview-results.html?id=${interviewId}`;
-      } else {
-        // Try to fetch next question from server
-        if (this.questionCount < this.maxQuestions) {
-          await this.getNextQuestion();
-        } else {
-          await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
-          localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
-          window.location.href = `/interview-results.html?id=${interviewId}`;
-        }
-      }
-    } catch (error) {
-      console.error('[voice] Error submitting answer:', error);
-      UIHelper.hideLoading();
-      UIHelper.error('Failed to submit answer');
-    } finally {
-      this.submitting = false;
-    }
+      this.synthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.96;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      utterance.onstart = () => {
+        this.setStatus('speaking');
+        this.updateMicrophoneStatus('Speaking...');
+      };
+      utterance.onend = () => {
+        this.updateMicrophoneStatus('Ready');
+        resolve();
+      };
+      utterance.onerror = () => {
+        this.updateMicrophoneStatus('Ready');
+        resolve();
+      };
+      this.synthesis.speak(utterance);
+    });
   }
 
-  /**
-   * Toggle mute
-   */
   toggleMute() {
-    this.synthesis.cancel();
-    UIHelper.info('Audio muted');
-  }
-
-  /**
-   * End interview
-   */
-  async endInterview() {
-    try {
-      UIHelper.showLoading('Finishing interview...');
-
-      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
-      console.log('[voice] endInterview - interviewId', interviewId);
-      const response = await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
-
-      if (response?.error) {
-        UIHelper.hideLoading();
-        UIHelper.error(response.error);
-        return;
-      }
-
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
-
-      UIHelper.hideLoading();
-      UIHelper.success('Interview completed!');
-
-      setTimeout(() => {
-        window.location.href = `/interview-results.html?id=${interviewId}`;
-      }, 800);
-    } catch (error) {
-      console.error('Error ending interview:', error);
-      UIHelper.hideLoading();
-      UIHelper.error('Failed to end interview');
+    this.isMuted = !this.isMuted;
+    if (this.isMuted) {
+      this.synthesis.cancel();
+      UIHelper.info('Audio muted');
+    } else {
+      UIHelper.info('Audio enabled');
     }
   }
 
-  /**
-   * Exit interview - user initiated exit
-   */
-  async exitInterview() {
-    // Confirm exit
-    const confirmed = confirm('Are you sure you want to exit the interview? Your results will be evaluated based on the answers provided so far.');
-    
-    if (!confirmed) {
-      return;
+  displayQuestion(questionData) {
+    const questionElement = document.querySelector('.interview-question-text');
+    const qText = typeof questionData === 'string' ? questionData : questionData?.question || questionData?.text || questionData?.prompt || '';
+    if (questionElement) {
+      questionElement.textContent = qText;
     }
 
-    try {
-      // Stop recording if it's active
-      if (this.isListening && this.recognition) {
-        try {
-          this.recognition.stop();
-        } catch (e) {
-          console.warn('[voice] recognition.stop error during exit', e);
-        }
-      }
+    this.currentAnswer = '';
+    this.showLiveTranscript('');
+    const questionTimer = document.getElementById('question-timer');
+    if (questionTimer) {
+      questionTimer.dataset.seconds = '0';
+      questionTimer.textContent = '00:00';
+    }
+    this.updateProgressUI();
+  }
 
-      UIHelper.showLoading('Exiting interview and calculating score...');
-
-      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
-      console.log('[voice] exitInterview - interviewId', interviewId);
-
-      // Call end interview endpoint to finalize and calculate score
-      const response = await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
-
-      if (response?.error) {
-        UIHelper.hideLoading();
-        UIHelper.error(response.error);
-        return;
-      }
-
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
-
-      UIHelper.hideLoading();
-      UIHelper.success('Interview exited. Loading your results...');
-
-      setTimeout(() => {
-        window.location.href = `/interview-results.html?id=${interviewId}`;
-      }, 800);
-    } catch (error) {
-      console.error('[voice] Error exiting interview:', error);
-      UIHelper.hideLoading();
-      UIHelper.error('Failed to exit interview');
+  showLiveTranscript(text) {
+    const transcriptElement = document.querySelector('.transcript-text');
+    if (transcriptElement) {
+      transcriptElement.textContent = text || 'Your answer will appear here as you speak...';
+      transcriptElement.classList.toggle('transcript-empty', !text);
+      transcriptElement.scrollTop = transcriptElement.scrollHeight;
     }
   }
 
-  /**
-   * Update microphone status
-   */
-  updateMicrophoneStatus(status) {
-    const statusElement = document.querySelector('.microphone-status');
-    if (statusElement) {
-      statusElement.textContent = status;
-    }
-  }
+  renderTranscript() {
+    const transcriptContainer = document.querySelector('.conversation-feed');
+    if (!transcriptContainer) return;
+    transcriptContainer.innerHTML = '';
 
-  renderEvaluation({ question, answer, evaluation, score }) {
-    try {
-      const container = document.querySelector('.previous-questions');
-      if (!container) return;
-
-      const listEl = container.querySelector('.previous-list') || container;
-
-      const node = document.createElement('div');
-      node.className = 'result-item';
-      const qText = question?.question || question?.text || 'Question';
-      node.innerHTML = `
-        <div class="result-item-title">${qText}</div>
-        <div class="result-item-description"><strong>Your answer:</strong> ${answer}</div>
-        <div class="result-item-description"><strong>AI Evaluation:</strong> ${evaluation || 'N/A'}</div>
+    const items = this.transcript.length ? this.transcript : [{ role: 'assistant', message: this.currentQuestion || 'Interview ready' }];
+    items.forEach((entry) => {
+      const row = document.createElement('div');
+      row.className = `conversation-item ${entry.role === 'assistant' ? 'assistant' : 'user'}`;
+      row.innerHTML = `
+        <div class="bubble-label">${entry.role === 'assistant' ? 'AI' : 'You'}</div>
+        <div class="bubble-text">${entry.message}</div>
       `;
-
-      listEl.insertBefore(node, listEl.firstChild);
-    } catch (e) {
-      console.error('[voice] renderEvaluation error', e);
-    }
+      transcriptContainer.appendChild(row);
+    });
+    transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
   }
 
-  /**
-   * Update progress UI
-   */
   updateProgressUI() {
     const progressItems = document.querySelectorAll('.progress-item');
     progressItems.forEach((item, index) => {
       item.classList.remove('completed', 'current', 'pending');
-
       if (index < this.questionCount - 1) {
         item.classList.add('completed');
       } else if (index === this.questionCount - 1) {
@@ -642,10 +465,134 @@ class VoiceInterview {
         item.classList.add('pending');
       }
     });
+
+    const counter = document.getElementById('question-counter');
+    if (counter) {
+      counter.textContent = `Question ${this.questionCount} / ${this.maxQuestions}`;
+    }
+    const percent = document.getElementById('progress-percent');
+    if (percent) {
+      percent.textContent = `${Math.round((this.questionCount / this.maxQuestions) * 100)}%`;
+    }
+  }
+
+  updateMicrophoneStatus(status) {
+    const statusElement = document.querySelector('.microphone-status');
+    if (statusElement) {
+      statusElement.textContent = status;
+    }
+  }
+
+  async submitAnswer() {
+    const answerText = (this.currentAnswer || '').trim();
+    if (!answerText) return;
+    if (this.submitting) return;
+
+    this.submitting = true;
+    this.setStatus('thinking');
+    UIHelper.showLoading('Evaluating your answer...');
+
+    try {
+      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
+      const response = await api.post(CONFIG.ENDPOINTS.SUBMIT_ANSWER, { interviewId, answerText });
+      if (response?.error) {
+        UIHelper.hideLoading();
+        UIHelper.error(response.error);
+        return;
+      }
+
+      const evaluation = response.evaluation || response.data?.evaluation || null;
+      const nextQuestion = response.nextQuestion || response.data?.nextQuestion || response.question || response.data?.question || '';
+      const assistantReply = response.assistantReply || response.data?.assistantReply || '';
+      const scores = response.scores || response.data?.scores || {};
+      this.answers.push({ question: this.currentQuestion, answer: answerText, evaluation, scores });
+      this.transcript.push({ role: 'user', message: answerText });
+      this.transcript.push({ role: 'assistant', message: assistantReply });
+      this.transcript.push({ role: 'assistant', message: nextQuestion });
+      this.renderTranscript();
+      this.renderEvaluation({ question: this.currentQuestion, answer: answerText, evaluation, assistantReply, scores });
+
+      UIHelper.hideLoading();
+      if (nextQuestion) {
+        this.currentQuestion = nextQuestion;
+        this.questionCount += 1;
+        this.updateProgressUI();
+        this.setStatus('generating');
+        await this.speakAndWait(assistantReply ? `${assistantReply} ${nextQuestion}` : nextQuestion);
+        this.setStatus('listening');
+        this.displayQuestion(nextQuestion);
+        this.enableMic();
+      } else {
+        await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
+        window.location.href = `/interview-results.html?id=${interviewId}`;
+      }
+    } catch (error) {
+      console.error('[voice] Error submitting answer:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to submit answer. Please try again.');
+    } finally {
+      this.submitting = false;
+      this.currentAnswer = '';
+      this.showLiveTranscript('');
+    }
+  }
+
+  renderEvaluation({ question, answer, evaluation, assistantReply, scores }) {
+    const container = document.querySelector('.previous-questions');
+    if (!container) return;
+
+    const listEl = container.querySelector('.previous-list') || container;
+    const node = document.createElement('div');
+    node.className = 'result-item';
+    const qText = question?.question || question?.text || question || 'Question';
+    node.innerHTML = `
+      <div class="result-item-title">${qText}</div>
+      <div class="result-item-description"><strong>Your answer:</strong> ${answer}</div>
+      <div class="result-item-description"><strong>Feedback:</strong> ${evaluation?.finalSummary || evaluation?.finalReport || assistantReply || 'N/A'}</div>
+      <div class="result-item-description"><strong>Score:</strong> ${scores?.finalScore || evaluation?.finalScore || 'N/A'}</div>
+    `;
+    listEl.insertBefore(node, listEl.firstChild);
+  }
+
+  async endInterview() {
+    try {
+      UIHelper.showLoading('Finishing interview...');
+      const interviewId = this.interviewSession?.interviewId || this.interviewSession?.id || this.interviewSession?._id;
+      const response = await api.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
+      this.clearTimers();
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
+      UIHelper.hideLoading();
+      if (!response?.error) {
+        window.location.href = `/interview-results.html?id=${interviewId}`;
+      }
+    } catch (error) {
+      console.error('Error ending interview:', error);
+      UIHelper.hideLoading();
+      UIHelper.error('Failed to end interview');
+    }
+  }
+
+  async exitInterview() {
+    const confirmed = confirm('Are you sure you want to exit? Your interview progress will be saved.');
+    if (!confirmed) return;
+    if (this.recognition && this.isListening) {
+      try { this.recognition.stop(); } catch (error) { console.warn(error); }
+    }
+    await this.endInterview();
+  }
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (this.isMuted) {
+      this.synthesis.cancel();
+      UIHelper.info('Audio muted');
+    } else {
+      UIHelper.info('Audio enabled');
+    }
   }
 }
 
-// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new VoiceInterview();
@@ -654,7 +601,6 @@ if (document.readyState === 'loading') {
   new VoiceInterview();
 }
 
-// Export for use
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VoiceInterview;
 }
