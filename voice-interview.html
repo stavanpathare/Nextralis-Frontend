@@ -24,8 +24,8 @@
           <h2 class="setup-title">Interview Settings</h2>
 
           <div class="form-group">
-            <label class="form-label">Job Role</label>
-            <select id="job-role" required>
+            <label class="form-label" for="job-role">Job Role</label>
+            <select id="job-role" name="job-role" required aria-describedby="job-role-help job-role-error">
               <option value="">Select a job role</option>
               <option value="Frontend Developer">Frontend Developer</option>
               <option value="Backend Developer">Backend Developer</option>
@@ -35,6 +35,20 @@
               <option value="Product Manager">Product Manager</option>
               <option value="Other">Other</option>
             </select>
+            <div id="job-role-help" class="form-help">Choose a preset role or select “Other” to enter your own.</div>
+            <div id="custom-role-wrapper" class="custom-role-wrapper" aria-hidden="true" hidden>
+              <label class="form-label" for="custom-job-role">Custom Job Role</label>
+              <input
+                type="text"
+                id="custom-job-role"
+                name="custom-job-role"
+                class="custom-role-input"
+                placeholder="Enter your job role"
+                aria-label="Custom job role"
+                aria-describedby="job-role-error"
+              />
+            </div>
+            <div id="job-role-error" class="form-error" role="alert"></div>
           </div>
 
           <div class="form-group">

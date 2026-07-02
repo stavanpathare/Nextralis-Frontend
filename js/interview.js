@@ -54,18 +54,102 @@ class VoiceInterview {
 
   setupEventListeners() {
     const startBtn = document.getElementById('btn-start-interview');
+    const jobRoleSelect = document.getElementById('job-role');
+    const customRoleInput = document.getElementById('custom-job-role');
+
     if (startBtn && !startBtn.dataset.listenerAttached) {
       startBtn.addEventListener('click', () => this.startInterview());
       startBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (jobRoleSelect && !jobRoleSelect.dataset.listenerAttached) {
+      jobRoleSelect.addEventListener('change', () => this.toggleCustomRoleInput());
+      jobRoleSelect.dataset.listenerAttached = 'true';
+    }
+
+    if (customRoleInput && !customRoleInput.dataset.listenerAttached) {
+      customRoleInput.addEventListener('input', () => this.clearRoleError());
+      customRoleInput.dataset.listenerAttached = 'true';
+    }
+
+    this.toggleCustomRoleInput();
+  }
+
+  toggleCustomRoleInput() {
+    const roleSelect = document.getElementById('job-role');
+    const wrapper = document.getElementById('custom-role-wrapper');
+    const customInput = document.getElementById('custom-job-role');
+    const isOther = roleSelect?.value === 'Other';
+
+    if (wrapper) {
+      wrapper.hidden = !isOther;
+      wrapper.setAttribute('aria-hidden', String(!isOther));
+    }
+
+    if (isOther && customInput) {
+      customInput.focus();
+    }
+  }
+
+  getSelectedRole() {
+    const roleSelect = document.getElementById('job-role');
+    const customInput = document.getElementById('custom-job-role');
+    const selectedRole = roleSelect?.value || '';
+
+    if (selectedRole === 'Other') {
+      return (customInput?.value || '').trim();
+    }
+
+    return selectedRole;
+  }
+
+  validateInterviewSetup() {
+    const roleSelect = document.getElementById('job-role');
+    const customInput = document.getElementById('custom-job-role');
+    const errorEl = document.getElementById('job-role-error');
+    const selectedRole = roleSelect?.value || '';
+
+    if (!selectedRole) {
+      this.showRoleError('Please select a job role.');
+      return false;
+    }
+
+    if (selectedRole === 'Other') {
+      const customRole = (customInput?.value || '').trim();
+      if (!customRole) {
+        this.showRoleError('Please enter your job role.');
+        return false;
+      }
+    }
+
+    this.clearRoleError();
+    return true;
+  }
+
+  showRoleError(message) {
+    const errorEl = document.getElementById('job-role-error');
+    if (errorEl) {
+      errorEl.textContent = message;
+    }
+  }
+
+  clearRoleError() {
+    const errorEl = document.getElementById('job-role-error');
+    if (errorEl) {
+      errorEl.textContent = '';
     }
   }
 
   async startInterview() {
     const startBtn = document.getElementById('btn-start-interview');
-    const jobRole = document.getElementById('job-role')?.value;
     const experienceLevel = document.getElementById('experience-level')?.value;
     const interviewType = document.getElementById('interview-type')?.value;
     const difficulty = document.getElementById('difficulty')?.value;
+    const jobRole = this.getSelectedRole();
+
+    if (!this.validateInterviewSetup()) {
+      return;
+    }
 
     if (!jobRole || !experienceLevel || !interviewType || !difficulty) {
       UIHelper.error('Please fill all fields');

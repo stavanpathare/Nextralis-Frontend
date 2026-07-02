@@ -53,7 +53,20 @@
   margin-bottom: var(--spacing-lg);
 }
 
-.setup-form select {
+.setup-form .form-help {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+.setup-form .form-error {
+  min-height: 1.1rem;
+  color: #fda4af;
+  font-size: var(--font-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.setup-form select, .setup-form input[type="text"] {
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   background: rgba(255, 255, 255, 0.05);
@@ -65,10 +78,30 @@
   transition: all var(--transition-fast);
 }
 
-.setup-form select:focus {
+.setup-form select:focus, .setup-form input[type="text"]:focus {
   outline: none;
   border-color: var(--color-neon-blue);
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+}
+
+.setup-form input[type="text"] {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--font-base);
+  transition: all var(--transition-fast);
+}
+
+.custom-role-wrapper {
+  margin-top: var(--spacing-md);
+  animation: fadeSlideIn 0.25s ease-out;
+}
+
+.custom-role-wrapper[hidden] {
+  display: none;
 }
 
 .setup-form option {
