@@ -54,8 +54,9 @@ class ResumeAnalyzer {
         if (target?.closest('#btn-analyze')) {
           return;
         }
-        const currentFileInput = document.getElementById('resume-file');
-        currentFileInput?.click();
+        e.preventDefault();
+        e.stopPropagation();
+        this.openFilePicker();
       });
 
       uploadBox.addEventListener('dragover', (e) => {
@@ -77,6 +78,12 @@ class ResumeAnalyzer {
       });
     }
 
+    if (fileInput) {
+      fileInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
     this.attachCurrentFileInputListener();
 
     const analyzeBtn = document.getElementById('btn-analyze');
@@ -87,6 +94,11 @@ class ResumeAnalyzer {
         this.analyzeResume();
       });
     }
+  }
+
+  openFilePicker() {
+    const currentFileInput = document.getElementById('resume-file');
+    currentFileInput?.click();
   }
 
   attachCurrentFileInputListener() {
