@@ -16,6 +16,7 @@ class ResumeAnalyzer {
     this.isAnalyzing = false;
     this.listenersBound = false;
     this.fileInputBoundElement = null;
+    this.filePickerOpen = false;
     this.init();
   }
 
@@ -40,13 +41,11 @@ class ResumeAnalyzer {
 
   setupEventListeners() {
     if (this.listenersBound) {
-      this.attachCurrentFileInputListener();
       return;
     }
 
     this.listenersBound = true;
     const uploadBox = document.getElementById('upload-box');
-    const fileInput = document.getElementById('resume-file');
 
     if (uploadBox) {
       uploadBox.addEventListener('click', (e) => {
@@ -54,8 +53,9 @@ class ResumeAnalyzer {
         if (target?.closest('#btn-analyze')) {
           return;
         }
-        e.preventDefault();
-        e.stopPropagation();
+        if (target?.closest('.btn')) {
+          e.stopPropagation();
+        }
         this.openFilePicker();
       });
 
@@ -78,12 +78,6 @@ class ResumeAnalyzer {
       });
     }
 
-    if (fileInput) {
-      fileInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-    }
-
     this.attachCurrentFileInputListener();
 
     const analyzeBtn = document.getElementById('btn-analyze');
@@ -97,13 +91,21 @@ class ResumeAnalyzer {
   }
 
   openFilePicker() {
-    const currentFileInput = document.getElementById('resume-file');
-    currentFileInput?.click();
+    const input = document.getElementById('resume-file');
+    if (!input || this.filePickerOpen) {
+      return;
+    }
+
+    this.filePickerOpen = true;
+    input.click();
+    window.setTimeout(() => {
+      this.filePickerOpen = false;
+    }, 500);
   }
 
   attachCurrentFileInputListener() {
     const fileInput = document.getElementById('resume-file');
-    if (!fileInput || this.fileInputBoundElement === fileInput) {
+    if (!fileInput || this.fileInputBoundElement) {
       return;
     }
 
@@ -132,22 +134,35 @@ class ResumeAnalyzer {
 
     const uploadBox = document.getElementById('upload-box');
     const uploadStatus = document.getElementById('upload-status-value');
+    const uploadTitle = document.querySelector('#upload-box .upload-box-title');
+    const uploadDescription = document.querySelector('#upload-box .upload-box-description');
+    const chooseButton = document.querySelector('#upload-box .btn-secondary');
+    const analyzeButton = document.getElementById('btn-analyze');
+
     if (uploadStatus) {
       uploadStatus.textContent = `✓ ${this.escapeHtml(file.name)} • ${(file.size / 1024 / 1024).toFixed(2)} MB • Ready to analyze`;
       uploadStatus.style.color = 'var(--color-success, #16a34a)';
     }
 
-    if (uploadBox) {
-      uploadBox.innerHTML = `
-        <div class="upload-box-preview">
-          <div class="upload-box-title">✓ ${this.escapeHtml(file.name)}</div>
-          <div class="upload-box-description">${(file.size / 1024 / 1024).toFixed(2)} MB • Ready to analyze</div>
-          <button type="button" class="btn btn-secondary mt-lg" id="btn-analyze">Analyze Resume</button>
-        </div>
-      `;
+    if (uploadTitle) {
+      uploadTitle.textContent = `✓ ${this.escapeHtml(file.name)}`;
+    }
 
-      this.listenersBound = false;
-      this.setupEventListeners();
+    if (uploadDescription) {
+      uploadDescription.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB • Ready to analyze`;
+    }
+
+    if (chooseButton) {
+      chooseButton.textContent = 'Choose Another File';
+    }
+
+    if (analyzeButton) {
+      analyzeButton.style.display = 'inline-flex';
+      analyzeButton.textContent = 'Analyze Resume';
+    }
+
+    if (uploadBox) {
+      uploadBox.classList.add('has-file');
     }
   }
 
@@ -631,6 +646,11 @@ class ResumeAnalyzer {
     const resultsContainer = document.querySelector('.analysis-results');
     const uploadStatus = document.getElementById('upload-status-value');
     const fileInput = document.getElementById('resume-file');
+    const uploadTitle = document.querySelector('#upload-box .upload-box-title');
+    const uploadDescription = document.querySelector('#upload-box .upload-box-description');
+    const chooseButton = document.querySelector('#upload-box .btn-secondary');
+    const analyzeButton = document.getElementById('btn-analyze');
+    const uploadBox = document.getElementById('upload-box');
 
     if (uploadStatus) {
       uploadStatus.textContent = 'Ready for a premium review';
@@ -641,6 +661,27 @@ class ResumeAnalyzer {
       fileInput.value = '';
     }
 
+    if (uploadTitle) {
+      uploadTitle.textContent = 'Drop your resume here';
+    }
+
+    if (uploadDescription) {
+      uploadDescription.textContent = 'PDF only • up to 5MB';
+    }
+
+    if (chooseButton) {
+      chooseButton.textContent = 'Choose File';
+    }
+
+    if (analyzeButton) {
+      analyzeButton.style.display = 'none';
+      analyzeButton.textContent = 'Analyze Resume';
+    }
+
+    if (uploadBox) {
+      uploadBox.classList.remove('has-file');
+    }
+
     if (uploadSection) {
       uploadSection.style.display = 'block';
     }
@@ -648,21 +689,6 @@ class ResumeAnalyzer {
     if (resultsContainer) {
       resultsContainer.style.display = 'none';
       resultsContainer.innerHTML = '';
-    }
-
-    const uploadBox = document.getElementById('upload-box');
-    if (uploadBox) {
-      uploadBox.innerHTML = `
-        <div class="upload-box-icon">📤</div>
-        <div class="upload-box-text">
-          <div class="upload-box-title">Drop your resume here</div>
-          <div class="upload-box-description">PDF only • up to 5MB</div>
-        </div>
-        <button type="button" class="btn btn-secondary">Choose File</button>
-        <input type="file" id="resume-file" accept=".pdf" style="display: none" />
-      `;
-      this.listenersBound = false;
-      this.setupEventListeners();
     }
 
     this.currentFile = null;
