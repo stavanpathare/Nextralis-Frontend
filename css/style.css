@@ -851,6 +851,52 @@ textarea {
   cursor: pointer;
 }
 
+/* Shared modal surface */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 39, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #ffffff;
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  color: #111827;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.16);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #111827;
+}
+
+.modal-body {
+  margin: 16px 0 24px;
+}
+
+.modal-body p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn {
+  min-width: 100px;
+}
+
 /* ============================================
    RESPONSIVE GRID ADJUSTMENTS
    ============================================ */

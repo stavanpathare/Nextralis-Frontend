@@ -200,23 +200,23 @@ class UIHelper {
             z-index: 9999;
           }
           .modal-content {
-            background: rgba(26, 31, 58, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid rgba(229, 231, 235, 0.9);
             border-radius: 16px;
             padding: 24px;
             max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.16);
           }
           .modal-header h3 {
             margin: 0;
-            color: var(--color-text-primary);
+            color: #111827;
           }
           .modal-body {
             margin: 16px 0 24px;
           }
           .modal-body p {
             margin: 0;
-            color: var(--color-text-secondary);
+            color: #4b5563;
           }
           .modal-footer {
             display: flex;
