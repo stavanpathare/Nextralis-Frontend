@@ -142,7 +142,7 @@
 
 .analysis-item {
   padding: var(--spacing-lg);
-  background: rgba(26, 31, 58, 0.4);
+  /* background: rgba(26, 31, 58, 0.4); */
   border-left: 3px solid var(--color-neon-blue);
   border-radius: var(--radius-md);
 }
@@ -509,7 +509,7 @@
 .panel-card,
 .rewrite-card,
 .keyword-card {
-  background: rgba(26, 31, 58, 0.62);
+  /* background: rgba(26, 31, 58, 0.62); */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
