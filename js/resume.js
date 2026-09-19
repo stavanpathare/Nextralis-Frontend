@@ -531,6 +531,7 @@ class ResumeAnalyzer {
           <div class="flex gap-lg">
             <button type="button" class="btn btn-primary" onclick="resetAnalyzer()">Analyze Another Resume</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+            <button type="button" class="btn btn-secondary" id="btn-download-report" onclick="resumeAnalyzerInstance.downloadReport()">Download Resume Report (PDF)</button>
           </div>
         </div>
       </div>
@@ -538,6 +539,64 @@ class ResumeAnalyzer {
 
     this.attachCopyHandlers();
     UIHelper.scrollTo(resultsContainer);
+  }
+
+  downloadReport() {
+    const jsPDF = window.jspdf?.jsPDF;
+    if (!jsPDF || !this.analysisResults) {
+      window.alert('The PDF report is not ready yet. Please try again in a moment.');
+      return;
+    }
+
+    const analysis = this.normalizeAnalysisPayload(this.analysisResults);
+    const document = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = document.internal.pageSize.getWidth();
+    const pageHeight = document.internal.pageSize.getHeight();
+    const margin = 42;
+    const contentWidth = pageWidth - margin * 2;
+    let cursorY = 48;
+
+    const addText = (text, size = 10, options = {}) => {
+      document.setFontSize(size);
+      document.setTextColor(options.color || '#1f2937');
+      const lines = document.splitTextToSize(String(text || ''), contentWidth);
+      const lineHeight = size + 5;
+      if (cursorY + lines.length * lineHeight > pageHeight - margin) {
+        document.addPage();
+        cursorY = margin;
+      }
+      document.text(lines, margin, cursorY);
+      cursorY += lines.length * lineHeight + (options.spacing ?? 5);
+    };
+
+    addText('Nextralis Resume Analysis Report', 18, { color: '#111827', spacing: 8 });
+    addText(`Generated: ${new Date().toLocaleDateString()}`, 9, { color: '#6b7280', spacing: 14 });
+    addText(`Overall Score: ${Math.round(analysis.overallScore || 0)}   ATS: ${Math.round(analysis.atsScore || 0)}   Match: ${Math.round(analysis.matchScore || 0)}   Readability: ${Math.round(analysis.readability || 0)}`, 11, { color: '#166534', spacing: 14 });
+
+    const aiReview = analysis.aiReview || {};
+    addText('AI Review', 13, { color: '#111827', spacing: 5 });
+    addText(aiReview.summary || 'No summary available.');
+    addText(`Strengths: ${(aiReview.strengths || []).join('; ') || 'None captured.'}`);
+    addText(`Weaknesses: ${(aiReview.weaknesses || []).join('; ') || 'None captured.'}`);
+    addText(`Recommendation: ${aiReview.recommendation || 'No recommendation available.'}`, 10, { spacing: 10 });
+
+    addText('Keyword Analysis', 13, { color: '#111827', spacing: 5 });
+    const keywordAnalysis = analysis.keywordAnalysis || {};
+    addText(`Matched: ${(keywordAnalysis.matchedKeywords || []).join(', ') || 'None captured.'}`);
+    addText(`Missing: ${(keywordAnalysis.missingKeywords || []).join(', ') || 'None captured.'}`);
+    addText(`Suggested: ${(keywordAnalysis.suggestedKeywords || []).join(', ') || 'None captured.'}`, 10, { spacing: 10 });
+
+    addText('Section Scores', 13, { color: '#111827', spacing: 5 });
+    (analysis.sections || []).forEach((section) => {
+      addText(`${section.name || 'Section'}: ${Math.round(section.score || 0)}% - ${(section.strengths || []).concat(section.problems || []).join(' ') || 'No detail available.'}`);
+    });
+
+    addText('Recommendations', 13, { color: '#111827', spacing: 5 });
+    (analysis.suggestions || analysis.recommendations || []).forEach((suggestion, index) => {
+      addText(`${index + 1}. ${suggestion}`);
+    });
+
+    document.save('nextralis-resume-report.pdf');
   }
 
   renderCategoryRow(key, value) {
