@@ -4,27 +4,13 @@
 
 class Dashboard {
   constructor() {
+    if (window.dashboard) return window.dashboard;
     window.dashboard = this;
     this.init();
   }
 
   async init() {
-    // Check authentication
-    if (!authManager.isAuthenticated()) {
-      // Attempt token-based recovery before forcing redirect
-      const token = api.getToken();
-      console.log('[dashboard] auth check failed; token from api:', token, 'localStorage token:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN), 'authManager.user:', authManager.getCurrentUser());
-      if (token) {
-        const valid = await authManager.verifyToken();
-        if (!valid) {
-          window.location.href = 'login.html';
-          return;
-        }
-      } else {
-        window.location.href = 'login.html';
-        return;
-      }
-    }
+    if (!await authManager.ready) return;
 
     this.setupEventListeners();
     await this.loadDashboardData();
@@ -146,48 +132,16 @@ class Dashboard {
         userAvatar.textContent = userInitials;
       }
 
-      // Load user stats
-      let stats = { totalResumes: 0, totalInterviews: 0, averageScore: 0 };
-      try {
-        const endpoint = CONFIG.ENDPOINTS.GET_USER_STATS;
-        const statsResponse = await api.getUserStats();
-        console.log('[Dashboard API]', endpoint, statsResponse);
-        stats = statsResponse?.data || stats;
-      } catch (error) {
-        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_USER_STATS, error);
-        console.warn('Could not load dashboard stats; using defaults.', error);
-      }
-      this.displayStats(stats);
-
-      // Load resume history
-      let resumeHistory = [];
-      try {
-        const endpoint = CONFIG.ENDPOINTS.GET_RESUME_HISTORY;
-        const resumeResponse = await api.getResumeHistory();
-        console.log('[Dashboard API]', endpoint, resumeResponse);
-        resumeHistory = resumeResponse?.data || [];
-      } catch (error) {
-        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_RESUME_HISTORY, error);
-        console.warn('Could not load resume history; using empty list.', error);
-      }
-      this.displayResumeHistory(resumeHistory);
-
-      // Load interview history
-      let interviewHistory = [];
-      try {
-        const endpoint = CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY;
-        const interviewResponse = await api.getInterviewHistory();
-        console.log('[Dashboard API]', endpoint, interviewResponse);
-        interviewHistory = interviewResponse?.data || [];
-      } catch (error) {
-        console.error('[Dashboard API Error]', CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY, error);
-        console.warn('Could not load interview history; using empty list.', error);
-      }
-      this.displayInterviewHistory(interviewHistory);
+      const summary = await window.dashboardDataService.getSummary();
+      this.displayStats(summary);
+      this.displayResumeHistory(summary.recentResumes);
+      this.displayInterviewHistory(summary.recentInterviews);
 
       UIHelper.hideLoading();
     } catch (error) {
-      console.error('Error loading dashboard:', error);
+      this.displayStats(null);
+      this.displayResumeHistory(null);
+      this.displayInterviewHistory(null);
       UIHelper.hideLoading();
       UIHelper.error('Failed to load dashboard data');
     }
@@ -203,17 +157,17 @@ class Dashboard {
     // Update stat cards if they exist
     const resumeCountElement = document.querySelector('[data-stat="resume-count"]');
     if (resumeCountElement) {
-      resumeCountElement.textContent = stats.totalResumes || 0;
+      resumeCountElement.textContent = Number.isFinite(stats.totalResumes) ? stats.totalResumes : '--';
     }
 
     const interviewCountElement = document.querySelector('[data-stat="interview-count"]');
     if (interviewCountElement) {
-      interviewCountElement.textContent = stats.totalInterviews || 0;
+      interviewCountElement.textContent = Number.isFinite(stats.totalInterviews) ? stats.totalInterviews : '--';
     }
 
     const averageScoreElement = document.querySelector('[data-stat="average-score"]');
     if (averageScoreElement) {
-      averageScoreElement.textContent = Math.round(stats.averageScore || 0);
+      averageScoreElement.textContent = Number.isFinite(stats.averageScore) ? Math.round(stats.averageScore) : '--';
     }
   }
 
@@ -226,7 +180,8 @@ class Dashboard {
 
     if (!tbody || resumes.length === 0) {
       if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No resumes yet</td></tr>';
+        const message = resumeHistory === null ? 'Unable to load resume history' : 'No resumes yet';
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">${message}</td></tr>`;
       }
       return;
     }
@@ -268,7 +223,8 @@ class Dashboard {
     const tbody = document.querySelector('.interview-history tbody');
     if (!tbody || !interviewHistory || interviewHistory.length === 0) {
       if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No interviews yet</td></tr>';
+        const message = interviewHistory === null ? 'Unable to load interview history' : 'No interviews yet';
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">${message}</td></tr>`;
       }
       return;
     }
@@ -283,10 +239,10 @@ class Dashboard {
       <tr>
         <td>${interview.jobRole || interview.role || 'N/A'}</td>
         <td>${UIHelper.formatDate(interview.interviewDate || interview.createdAt)}</td>
-        <td>${interview.score || 'N/A'}</td>
+        <td>${interview.finalScore ?? interview.score ?? 'N/A'}</td>
         <td>
-          <span class="table-status ${interview.status === 'completed' ? 'completed' : 'pending'}">
-            ${interview.status || 'pending'}
+          <span class="table-status ${interview.status === 'completed' || interview.complete ? 'completed' : 'pending'}">
+            ${interview.status || (interview.complete ? 'completed' : 'pending')}
           </span>
         </td>
         <td>

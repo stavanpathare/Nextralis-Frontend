@@ -37,6 +37,12 @@
   margin-bottom: var(--spacing-2xl);
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+  .resume-container .upload-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Upload Box */
 
 .upload-box {
@@ -215,6 +221,18 @@
 .history-item-meta {
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
+}
+
+.history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.history-pagination[hidden] {
+  display: none;
 }
 
 /* Analysis Results */

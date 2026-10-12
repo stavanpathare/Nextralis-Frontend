@@ -16,10 +16,8 @@ class APIClient {
     try {
       if (token) {
         localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
-        console.log('[api] setToken stored', CONFIG.STORAGE_KEYS.TOKEN, token);
       } else {
         localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
-        console.log('[api] setToken removed token');
       }
     } catch (e) {
       console.error('[api] setToken error saving token to localStorage', e);
@@ -33,14 +31,10 @@ class APIClient {
     if (!this.token) {
       try {
         this.token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-        console.log('[api] getToken loaded from localStorage', this.token);
       } catch (e) {
         console.error('[api] getToken error reading localStorage', e);
         this.token = null;
       }
-    } else {
-      // in-memory token
-      // console.log('[api] getToken in-memory', this.token);
     }
     return this.token;
   }
@@ -72,27 +66,22 @@ class APIClient {
    * Handle API errors
    */
   handleError(error) {
-    console.error('API Error:', error);
-
     if (error.response?.status === 401) {
-      // Token expired or unauthorized
-      this.setToken(null);
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
-      if (!window.location.pathname.endsWith('login.html')) {
-        window.location.href = 'login.html';
-      }
-      return { error: 'Session expired. Please login again.' };
+      authManager?.handleUnauthorized?.();
+      return { error: 'Session expired. Please login again.', status: 401 };
     }
 
+    console.error('API Error:', error.message || 'Request failed');
+
     if (error.response?.data?.message) {
-      return { error: error.response.data.message };
+      return { error: error.response.data.message, status: error.response.status };
     }
 
     if (error.message) {
-      return { error: error.message };
+      return { error: error.message, status: error.response?.status };
     }
 
-    return { error: 'An error occurred. Please try again.' };
+    return { error: 'An error occurred. Please try again.', status: error.response?.status };
   }
 
   /**
@@ -236,8 +225,15 @@ class APIClient {
   }
 
   async logout() {
-    this.setToken(null);
     return this.post(CONFIG.ENDPOINTS.LOGOUT);
+  }
+
+  async recordActivity() {
+    return this.post(CONFIG.ENDPOINTS.RECORD_ACTIVITY);
+  }
+
+  async getDashboardSummary() {
+    return this.get(CONFIG.ENDPOINTS.GET_DASHBOARD_SUMMARY);
   }
 
   async verifyToken() {
@@ -269,13 +265,15 @@ class APIClient {
      ============================================ */
 
   async uploadResume(file, metadata = {}) {
-    return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume', metadata });
+    const response = await this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume', metadata });
+    if (!response?.error && response?.success) window.dashboardDataService?.invalidate();
+    return response;
   }
 
   // analyzeResume removed — upload returns analysis directly from server
 
-  async getResumeHistory() {
-    return this.get(CONFIG.ENDPOINTS.GET_RESUME_HISTORY);
+  async getResumeHistory({ page = 1, limit = 20 } = {}) {
+    return this.get(`${CONFIG.ENDPOINTS.GET_RESUME_HISTORY}?page=${page}&limit=${limit}`);
   }
 
   async getResumeAnalysis(resumeId) {
@@ -283,7 +281,9 @@ class APIClient {
   }
 
   async deleteResume(resumeId) {
-    return this.delete(CONFIG.ENDPOINTS.DELETE_RESUME.replace(':id', resumeId));
+    const response = await this.delete(CONFIG.ENDPOINTS.DELETE_RESUME.replace(':id', resumeId));
+    if (!response?.error && response?.success) window.dashboardDataService?.invalidate();
+    return response;
   }
 
   /* ============================================
@@ -300,24 +300,32 @@ class APIClient {
   }
 
   async submitAnswer(interviewId, questionId, answer, audioData = null) {
-    return this.post(CONFIG.ENDPOINTS.SUBMIT_ANSWER, {
+    const response = await this.post(CONFIG.ENDPOINTS.SUBMIT_ANSWER, {
       interviewId,
       questionId,
       answer,
       audioData,
     });
+    if (!response?.error && response?.success && (response.finalReport || response.data?.finalReport)) {
+      window.dashboardDataService?.invalidate();
+    }
+    return response;
   }
 
   async endInterview(interviewId) {
-    return this.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
+    const response = await this.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
+    if (!response?.error && response?.success) window.dashboardDataService?.invalidate();
+    return response;
   }
 
-  async getInterviewHistory() {
-    return this.get(CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY);
+  async getInterviewHistory({ page = 1, limit = 20 } = {}) {
+    return this.get(`${CONFIG.ENDPOINTS.GET_INTERVIEW_HISTORY}?page=${page}&limit=${limit}`);
   }
 
   async deleteInterview(interviewId) {
-    return this.delete(CONFIG.ENDPOINTS.DELETE_INTERVIEW.replace(':id', interviewId));
+    const response = await this.delete(CONFIG.ENDPOINTS.DELETE_INTERVIEW.replace(':id', interviewId));
+    if (!response?.error && response?.success) window.dashboardDataService?.invalidate();
+    return response;
   }
 
   async getInterviewResult(interviewId) {

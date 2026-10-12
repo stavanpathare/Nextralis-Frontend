@@ -15,6 +15,8 @@ const CONFIG = {
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh',
     VERIFY_TOKEN: '/auth/verify',
+    RECORD_ACTIVITY: '/auth/activity',
+    GET_DASHBOARD_SUMMARY: '/auth/dashboard-summary',
     CHANGE_PASSWORD: '/auth/change-password',
 
     // User Profile
@@ -44,6 +46,7 @@ const CONFIG = {
     USER: 'user_data',
     INTERVIEW_SESSION: 'interview_session',
     RESUME_DATA: 'resume_data',
+    LAST_ACTIVITY: 'auth_last_activity',
   },
 
   // Interview Settings

@@ -27,10 +27,7 @@ class VoiceInterview {
   }
 
   async init() {
-    if (!authManager.isAuthenticated()) {
-      window.location.href = 'login.html';
-      return;
-    }
+    if (!await authManager.ready) return;
 
     const urlParams = new URLSearchParams(window.location.search);
     const liveMode = urlParams.get('live') === 'true';

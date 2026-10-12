@@ -6,6 +6,117 @@ class AuthManager {
   constructor() {
     this.user = this.loadUser();
     this.token = this.loadToken();
+    this.redirecting = false;
+    this.activityTimer = null;
+    this.lastActivitySync = 0;
+    this.ready = this.initializeProtectedPage();
+    window.addEventListener('storage', (event) => this.handleStorageChange(event));
+  }
+
+  async initializeProtectedPage() {
+    if (!document.body?.hasAttribute('data-requires-auth')) return true;
+
+    const valid = await this.verifyToken();
+    if (valid === false) {
+      this.handleUnauthorized();
+      return false;
+    }
+    if (valid === null) {
+      this.showAuthUnavailable();
+      return false;
+    }
+
+    document.body.removeAttribute('data-requires-auth');
+    document.body.classList.add('protected-page');
+    this.startActivityTracking();
+    return true;
+  }
+
+  showAuthUnavailable() {
+    const message = document.createElement('p');
+    message.className = 'auth-error-message';
+    message.textContent = 'Your session could not be verified. Please try again shortly.';
+    document.body.appendChild(message);
+  }
+
+  handleStorageChange(event) {
+    if (event.key === CONFIG.STORAGE_KEYS.TOKEN && event.newValue && event.newValue !== this.token) {
+      this.token = event.newValue;
+      api.token = event.newValue;
+      this.user = null;
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
+      window.dashboardDataService?.invalidate();
+      window.location.reload();
+      return;
+    }
+    if (event.key === CONFIG.STORAGE_KEYS.TOKEN && !event.newValue && document.body?.classList.contains('protected-page')) {
+      this.clearAuthState();
+      this.redirectToLogin();
+    } else if (event.key === CONFIG.STORAGE_KEYS.LAST_ACTIVITY && event.newValue) {
+      this.resetActivityTimer(Number(event.newValue));
+    }
+  }
+
+  startActivityTracking() {
+    this.inactivityMs = (this.inactivityMinutes || 30) * 60 * 1000;
+    const markActivity = () => {
+      const now = Date.now();
+      localStorage.setItem(CONFIG.STORAGE_KEYS.LAST_ACTIVITY, String(now));
+      this.resetActivityTimer(now);
+      if (now - this.lastActivitySync >= 5 * 60 * 1000) {
+        this.lastActivitySync = now;
+        api.recordActivity();
+      }
+    };
+
+    ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach((eventName) => {
+      document.addEventListener(eventName, markActivity, { passive: true });
+    });
+    this.resetActivityTimer(this.lastActivityAt || Date.now());
+    if (this.sessionExpiresAt) {
+      const remainingMs = new Date(this.sessionExpiresAt).getTime() - Date.now();
+      this.absoluteActivityTimer = setTimeout(() => this.handleUnauthorized(), Math.max(0, remainingMs));
+    }
+  }
+
+  resetActivityTimer(lastActivityAt) {
+    clearTimeout(this.activityTimer);
+    const inactivityMs = this.inactivityMs || 30 * 60 * 1000;
+    const remainingMs = inactivityMs - (Date.now() - lastActivityAt);
+    this.activityTimer = setTimeout(() => this.handleUnauthorized(), Math.max(0, remainingMs));
+  }
+
+  clearAuthState() {
+    this.token = null;
+    this.user = null;
+    api.setToken(null);
+    try {
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.LAST_ACTIVITY);
+    } catch (error) {
+      // Continue clearing in-memory state when storage is unavailable.
+    }
+    window.dashboardDataService?.invalidate();
+    try {
+      Object.keys(sessionStorage)
+        .filter((key) => key.startsWith('nextralis-dashboard:'))
+        .forEach((key) => sessionStorage.removeItem(key));
+    } catch (error) {
+      // Storage may be unavailable in restricted browser contexts.
+    }
+    clearTimeout(this.activityTimer);
+    clearTimeout(this.absoluteActivityTimer);
+  }
+
+  redirectToLogin() {
+    if (this.redirecting || window.location.pathname.endsWith('login.html')) return;
+    this.redirecting = true;
+    window.location.href = 'login.html';
+  }
+
+  handleUnauthorized() {
+    this.clearAuthState();
+    this.redirectToLogin();
   }
 
   /**
@@ -152,8 +263,6 @@ class AuthManager {
   async login(email, password) {
     try {
       const response = await api.login(email, password);
-      console.log('[auth] login response', response);
-
       if (response.error) {
         return { success: false, error: response.error };
       }
@@ -170,14 +279,12 @@ class AuthManager {
       } catch (e) {
         console.error('[auth] login fallback token save failed', e);
       }
-      console.log('[auth] login: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
       try {
         localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
       } catch (e) {
         console.error('[auth] login fallback user save failed', e);
       }
-      console.log('[auth] login: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
       return { success: true, data: response };
     } catch (error) {
@@ -192,8 +299,6 @@ class AuthManager {
   async register(name, email, password) {
     try {
       const response = await api.register(name, email, password);
-      console.log('[auth] register response', response);
-
       if (response.error) {
         return { success: false, error: response.error };
       }
@@ -210,14 +315,12 @@ class AuthManager {
       } catch (e) {
         console.error('[auth] register fallback token save failed', e);
       }
-      console.log('[auth] register: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
       try {
         localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
       } catch (e) {
         console.error('[auth] register fallback user save failed', e);
       }
-      console.log('[auth] register: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
 
       return { success: true, data: response };
@@ -231,21 +334,12 @@ class AuthManager {
    * Logout user
    */
   async logout() {
-    console.log('[auth] logout: clearing auth state');
     try {
       await api.logout();
     } catch (e) {
       console.warn('[auth] logout: server logout failed', e);
     }
-    api.setToken(null);
-    this.user = null;
-    this.token = null;
-    try {
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
-      localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
-    } catch (e) {
-      console.error('[auth] logout error clearing localStorage', e);
-    }
+    this.clearAuthState();
   }
 
   /**
@@ -254,16 +348,21 @@ class AuthManager {
   async verifyToken() {
     try {
       const response = await api.verifyToken();
-      console.log('[auth] verifyToken response', response);
-      if (response?.error || response?.success === false) {
-        await this.logout();
+      if (response?.status === 401 || response?.success === false) {
+        this.clearAuthState();
         return false;
       }
+      if (response?.error || !response?.data?.user) return null;
+      const user = response?.data?.user;
+      if (user) this.saveUser(user);
+      this.sessionExpiresAt = response.data.session?.expiresAt;
+      this.inactivityMinutes = response.data.session?.inactivityMinutes || 30;
+      this.lastActivityAt = response.data.session?.lastActivityAt
+        ? new Date(response.data.session.lastActivityAt).getTime()
+        : Date.now();
       return true;
     } catch (error) {
-      console.error('[auth] verifyToken error', error);
-      await this.logout();
-      return false;
+      return null;
     }
   }
 

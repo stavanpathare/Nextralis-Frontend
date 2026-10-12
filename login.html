@@ -170,8 +170,6 @@
               const attemptRedirect = () => {
                 attempts++;
                 const storedToken = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-                const storedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.USER);
-                console.log('[login] redirect check', { attempts, storedToken, storedUser });
 
                 if (storedToken) {
                   window.location.replace(loginRedirectTarget);
