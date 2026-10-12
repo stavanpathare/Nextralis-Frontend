@@ -14,7 +14,6 @@ class ResumeAnalyzer {
     this.currentFile = null;
     this.analysisResults = null;
     this.isAnalyzing = false;
-    this.historyPage = 1;
     this.listenersBound = false;
     this.fileInputBoundElement = null;
     this.filePickerOpen = false;
@@ -22,7 +21,10 @@ class ResumeAnalyzer {
   }
 
   async init() {
-    if (!await authManager.ready) return;
+    if (!authManager.isAuthenticated()) {
+      window.location.href = 'login.html';
+      return;
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const resumeId = urlParams.get('id');
@@ -188,6 +190,7 @@ class ResumeAnalyzer {
     try {
       UIHelper.showLoading('Uploading and analyzing resume...');
       const uploadResponse = await api.uploadResume(this.currentFile, { role, jobDescription });
+      console.log('[UPLOAD RESPONSE]', uploadResponse);
 
       if (uploadResponse?.error || uploadResponse?.success === false) {
         UIHelper.hideLoading();
@@ -207,7 +210,7 @@ class ResumeAnalyzer {
       this.analysisResults = this.normalizeAnalysisPayload(resumeRecord);
       this.updateUrl(resumeId);
       this.displayResults(this.analysisResults);
-      await this.loadResumeHistory(1);
+      await this.loadResumeHistory();
       UIHelper.success('Resume uploaded and analyzed successfully!');
     } catch (error) {
       console.error('Error analyzing resume:', error);
@@ -246,19 +249,17 @@ class ResumeAnalyzer {
     }
   }
 
-  async loadResumeHistory(page = this.historyPage) {
+  async loadResumeHistory() {
     try {
       const historyPanel = document.getElementById('resume-history-list');
       if (!historyPanel) return;
 
-      const response = await api.getResumeHistory({ page, limit: 4 });
-      if (response?.error) throw new Error(response.error);
+      const response = await api.getResumeHistory();
       const history =
         response.data ||
         response.resumes ||
         response.history ||
         [];
-      this.historyPage = response.pagination?.page || page;
 
       if (!history.length) {
         historyPanel.innerHTML = '<div class="history-item"><div><div class="history-item-title">No analyses yet</div><div class="history-item-meta">Upload a resume to create your first AI report.</div></div></div>';
@@ -289,41 +290,9 @@ class ResumeAnalyzer {
           }
         });
       });
-      this.renderHistoryPagination(response.pagination);
     } catch (error) {
       console.error('[resume] Error loading history:', error);
-      const historyPanel = document.getElementById('resume-history-list');
-      if (historyPanel) historyPanel.textContent = 'Unable to load resume history.';
     }
-  }
-
-  renderHistoryPagination(pagination = {}) {
-    const controls = document.getElementById('resume-history-pagination');
-    if (!controls) return;
-
-    const { page = this.historyPage, totalPages = 1 } = pagination;
-    controls.replaceChildren();
-    controls.hidden = totalPages <= 1;
-    if (controls.hidden) return;
-
-    const previous = document.createElement('button');
-    previous.type = 'button';
-    previous.className = 'btn btn-ghost';
-    previous.textContent = 'Previous';
-    previous.disabled = page <= 1;
-    previous.addEventListener('click', () => this.loadResumeHistory(page - 1));
-
-    const pageLabel = document.createElement('span');
-    pageLabel.textContent = `Page ${page} of ${totalPages}`;
-
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.className = 'btn btn-ghost';
-    next.textContent = 'Next';
-    next.disabled = page >= totalPages;
-    next.addEventListener('click', () => this.loadResumeHistory(page + 1));
-
-    controls.append(previous, pageLabel, next);
   }
 
   normalizeAnalysisPayload(payload) {
@@ -773,7 +742,7 @@ class ResumeAnalyzer {
     }
 
     if (uploadSection) {
-      uploadSection.style.removeProperty('display');
+      uploadSection.style.display = 'block';
     }
 
     if (resultsContainer) {

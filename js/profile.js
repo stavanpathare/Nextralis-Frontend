@@ -9,8 +9,11 @@ class ProfileManager {
   }
 
   async init() {
-    if (!await authManager.ready) return;
-    this.user = authManager.getCurrentUser();
+    // Check authentication
+    if (!authManager.isAuthenticated()) {
+      window.location.href = 'login.html';
+      return;
+    }
 
     this.setupEventListeners();
     await this.loadProfile();
@@ -95,20 +98,9 @@ class ProfileManager {
         userData = authManager.getCurrentUser() || {};
       }
 
-      let statsData = {};
-      try {
-        const statsResponse = await api.getUserStats();
-        if (statsResponse?.error) {
-          throw new Error(statsResponse.error);
-        }
-        statsData = statsResponse?.data || {};
-      } catch (error) {
-        console.error('[Profile API Error]', CONFIG.ENDPOINTS.GET_USER_STATS, error);
-      }
-
       this.user = userData;
       authManager.saveUser(userData);
-      this.displayProfile(userData, statsData);
+      this.displayProfile(userData);
       UIHelper.hideLoading();
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -134,7 +126,7 @@ class ProfileManager {
   /**
    * Display profile
    */
-  displayProfile(userData, statsData = {}) {
+  displayProfile(userData) {
     // Update display elements
     const profileCard = document.querySelector('.profile-card');
     if (profileCard) {
@@ -166,33 +158,30 @@ class ProfileManager {
     if (bioInput) bioInput.value = userData.bio || '';
 
     // Display stats
-    this.displayStats(userData, statsData);
+    this.displayStats(userData);
   }
 
   /**
    * Display stats
    */
-  displayStats(userData, statsData = {}) {
+  displayStats(userData) {
     const statsContainer = document.querySelector('.profile-stats');
     if (!statsContainer) return;
 
     const memberSince = userData.joinDate || userData.createdAt || null;
     const joinYear = memberSince ? new Date(memberSince).getFullYear() : 'N/A';
-    const totalResumes = statsData.totalResumes ?? userData.totalResumes ?? 0;
-    const totalInterviews = statsData.totalInterviews ?? userData.totalInterviews ?? 0;
-    const averageScore = statsData.averageScore ?? userData.averageScore ?? 0;
 
     statsContainer.innerHTML = `
       <div class="stat-item">
-        <div class="stat-value">${totalResumes}</div>
+        <div class="stat-value">${userData.totalResumes || 0}</div>
         <div class="stat-label">Resumes</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">${totalInterviews}</div>
+        <div class="stat-value">${userData.totalInterviews || 0}</div>
         <div class="stat-label">Interviews</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">${Math.round(averageScore)}%</div>
+        <div class="stat-value">${Math.round(userData.averageScore || 0)}%</div>
         <div class="stat-label">Avg Score</div>
       </div>
       <div class="stat-item">
