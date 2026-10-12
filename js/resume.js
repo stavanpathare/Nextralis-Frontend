@@ -742,7 +742,7 @@ class ResumeAnalyzer {
     }
 
     if (uploadSection) {
-      uploadSection.style.display = 'block';
+      uploadSection.style.removeProperty('display');
     }
 
     if (resultsContainer) {
