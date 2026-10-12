@@ -446,6 +446,22 @@ class UIHelper {
   }
 }
 
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', async (event) => {
+    const logoutControl = event.target.closest('[data-action="logout"]');
+    if (!logoutControl || typeof authManager === 'undefined') return;
+
+    event.preventDefault();
+    logoutControl.disabled = true;
+
+    try {
+      await authManager.logout();
+    } finally {
+      window.location.href = 'login.html';
+    }
+  });
+}
+
 // Export for use
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = UIHelper;
