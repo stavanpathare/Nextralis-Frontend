@@ -85,7 +85,8 @@ class Dashboard {
     // Set active link based on current page
     const currentPath = window.location.pathname;
     navLinks.forEach((link) => {
-      if (link.getAttribute('href').includes(currentPath)) {
+      const href = link.getAttribute('href');
+      if (href && href.includes(currentPath)) {
         link.classList.add('active');
       }
     });

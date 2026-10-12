@@ -98,9 +98,21 @@ class ProfileManager {
         userData = authManager.getCurrentUser() || {};
       }
 
+      let stats = {};
+      try {
+        const statsResponse = await api.getUserStats();
+        if (statsResponse?.error) {
+          throw new Error(statsResponse.error);
+        }
+        stats = statsResponse?.data || statsResponse;
+      } catch (error) {
+        console.error('[Profile API Error]', CONFIG.ENDPOINTS.GET_USER_STATS, error);
+        console.warn('Could not load profile stats; using available profile data.', error);
+      }
+
       this.user = userData;
       authManager.saveUser(userData);
-      this.displayProfile(userData);
+      this.displayProfile(userData, stats);
       UIHelper.hideLoading();
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -126,7 +138,7 @@ class ProfileManager {
   /**
    * Display profile
    */
-  displayProfile(userData) {
+  displayProfile(userData, stats = {}) {
     // Update display elements
     const profileCard = document.querySelector('.profile-card');
     if (profileCard) {
@@ -158,13 +170,13 @@ class ProfileManager {
     if (bioInput) bioInput.value = userData.bio || '';
 
     // Display stats
-    this.displayStats(userData);
+    this.displayStats(userData, stats);
   }
 
   /**
    * Display stats
    */
-  displayStats(userData) {
+  displayStats(userData, stats = {}) {
     const statsContainer = document.querySelector('.profile-stats');
     if (!statsContainer) return;
 
@@ -173,15 +185,15 @@ class ProfileManager {
 
     statsContainer.innerHTML = `
       <div class="stat-item">
-        <div class="stat-value">${userData.totalResumes || 0}</div>
+        <div class="stat-value">${stats.totalResumes ?? userData.totalResumes ?? 0}</div>
         <div class="stat-label">Resumes</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">${userData.totalInterviews || 0}</div>
+        <div class="stat-value">${stats.totalInterviews ?? userData.totalInterviews ?? 0}</div>
         <div class="stat-label">Interviews</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">${Math.round(userData.averageScore || 0)}%</div>
+        <div class="stat-value">${Math.round(stats.averageScore ?? userData.averageScore ?? 0)}%</div>
         <div class="stat-label">Avg Score</div>
       </div>
       <div class="stat-item">
