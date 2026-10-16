@@ -22,6 +22,38 @@ input[type='text'],input[type='email'],input[type='password'],input[type='number
 input[type='text']:focus,input[type='email']:focus,input[type='password']:focus,input[type='number']:focus,textarea:focus,select:focus { border-color:#6366f1; background:#fff; box-shadow:0 0 0 4px rgba(99,102,241,.12); }
 footer { color:#6b7280; background:transparent; padding:24px; margin-left:260px; } footer p { font-size:.8rem; }
 
+/* Landing page pricing */
+.pricing-section { padding:64px 24px 72px; background:#eef2f7; scroll-margin-top:76px; }
+.pricing-container { max-width:1200px; margin:0 auto; }
+.pricing-section .section-header { margin-bottom:38px; }
+.pricing-section .section-header h2 { color:#111827; font-size:clamp(1.8rem,3vw,2.35rem); margin-bottom:10px; }
+.pricing-section .section-header p { color:#64748b; }
+.pricing-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:stretch; gap:24px; }
+.pricing-card { position:relative; display:flex; flex-direction:column; min-width:0; padding:24px 26px; border:1px solid #e8ebf0; border-radius:18px; background:#fff; box-shadow:var(--shadow-md); }
+.pricing-card-popular { border:1.5px solid #635bff; box-shadow:0 8px 24px rgba(79,70,229,.12); }
+.pricing-popular-badge { position:absolute; top:-14px; left:50%; transform:translateX(-50%); padding:6px 16px; border-radius:999px; background:#4f46e5; color:#fff; font-size:.78rem; font-weight:700; white-space:nowrap; }
+.pricing-icon { display:grid; place-items:center; width:52px; height:52px; margin-bottom:12px; border-radius:14px; background:#f0efff; color:#4f46e5; }
+.pricing-icon svg { width:26px; height:26px; }
+.pricing-name { margin-bottom:4px; color:#111827; font-size:1.25rem; }
+.pricing-description { min-height:48px; margin-bottom:14px; color:#64748b; font-size:.9rem; line-height:1.5; }
+.pricing-price { display:flex; align-items:baseline; gap:8px; padding-bottom:14px; border-bottom:1px solid #edf0f4; color:#64748b; font-size:.9rem; }
+.pricing-price > span:first-child { color:#4f46e5; font-size:2.25rem; font-weight:800; letter-spacing:-.05em; line-height:1.2; }
+.pricing-period { white-space:nowrap; }
+.pricing-features { display:grid; gap:10px; margin:16px 0 20px; padding:0; list-style:none; color:#475569; font-size:.86rem; }
+.pricing-features li { position:relative; padding-left:26px; line-height:1.45; }
+.pricing-features li::before { position:absolute; top:1px; left:0; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#eeedff; color:#4f46e5; content:"✓"; font-size:.7rem; font-weight:800; }
+.pricing-cta { display:flex; align-items:center; justify-content:center; gap:10px; min-height:44px; margin-top:auto; padding:10px 16px; border-radius:12px; background:#f0efff; color:#4338ca; font-size:.88rem; font-weight:700; transition:background .2s ease,color .2s ease,transform .2s ease; }
+.pricing-cta:hover { transform:translateY(-1px); background:#e4e2ff; color:#3730a3; }
+.pricing-card-popular .pricing-cta { background:#4f46e5; color:#fff; box-shadow:0 4px 12px rgba(79,70,229,.2); }
+.pricing-card-popular .pricing-cta:hover { background:#4338ca; color:#fff; }
+.pricing-cta span { font-size:1.1rem; }
+
+@media (max-width:900px) {
+  .pricing-grid { grid-template-columns:1fr; max-width:560px; margin:0 auto; gap:20px; }
+  .pricing-card-popular { margin-top:8px; }
+  .pricing-description { min-height:0; }
+}
+
 /* Application shell */
 .dashboard-layout { display:block; background:#f5f7fb; }.sidebar { background:#fff; border-right:1px solid #e8ebf0; padding:24px 16px; width:260px; box-shadow:4px 0 20px rgba(15,23,42,.025); }.sidebar-header { border:0; padding:0 10px 22px; margin-bottom:16px; }.sidebar-logo { color:#111827; background:none; -webkit-text-fill-color:initial; font-size:1.35rem; letter-spacing:-.06em; }.sidebar-logo::before { content:'N'; display:inline-grid; place-items:center; width:28px; height:28px; margin-right:9px; border-radius:9px; background:#4f46e5; color:#fff; font-size:.85rem; vertical-align:2px; }
 .sidebar-nav { display:grid; gap:5px; }.sidebar-nav-item { margin:0; }.sidebar-nav-link { color:#64748b; border-radius:10px; padding:11px 12px; gap:12px; font-size:.9rem; }.sidebar-nav-link:hover,.sidebar-nav-link.active { color:#4338ca; background:#eef2ff; border:0; padding-left:12px; }.sidebar-nav-icon { font-size:1rem; width:18px; }
