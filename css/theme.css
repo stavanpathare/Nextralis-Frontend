@@ -1,0 +1,445 @@
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg-primary: #080b12;
+  --color-bg-secondary: #111622;
+  --color-bg-tertiary: #181e2b;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #d1d5db;
+  --color-text-tertiary: #a1a9b8;
+  --color-border: #293244;
+  --color-border-light: #3b465c;
+  --color-neon-blue: #a78bfa;
+  --color-neon-purple: #a78bfa;
+  --color-neon-pink: #c084fc;
+  --color-neon-cyan: #c4b5fd;
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+  --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  --gradient-dark: linear-gradient(135deg, #080b12 0%, #111622 100%);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, .22);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, .4);
+  --shadow-xl: 0 24px 56px rgba(0, 0, 0, .48);
+}
+
+:root[data-theme='dark'] body,
+:root[data-theme='dark'] .dashboard-layout,
+:root[data-theme='dark'] .dashboard-main,
+:root[data-theme='dark'] .auth-container,
+:root[data-theme='dark'] .pricing-section {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] body {
+  background-image: none;
+}
+
+:root[data-theme='dark'] p,
+:root[data-theme='dark'] .action-description,
+:root[data-theme='dark'] .pricing-description,
+:root[data-theme='dark'] .pricing-features,
+:root[data-theme='dark'] .form-help,
+:root[data-theme='dark'] .text-muted {
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] a {
+  color: #c4b5fd;
+}
+
+:root[data-theme='dark'] a:hover {
+  color: #ddd6fe;
+}
+
+:root[data-theme='dark'] .sidebar,
+:root[data-theme='dark'] .navbar,
+:root[data-theme='dark'] .stats-card,
+:root[data-theme='dark'] .history-section,
+:root[data-theme='dark'] .action-card,
+:root[data-theme='dark'] .upload-box,
+:root[data-theme='dark'] .analysis-panel,
+:root[data-theme='dark'] .history-card,
+:root[data-theme='dark'] .setup-form,
+:root[data-theme='dark'] .setup-info,
+:root[data-theme='dark'] .interview-main,
+:root[data-theme='dark'] .progress-widget,
+:root[data-theme='dark'] .previous-questions,
+:root[data-theme='dark'] .conversation-panel,
+:root[data-theme='dark'] .interview-transcript,
+:root[data-theme='dark'] .score-card,
+:root[data-theme='dark'] .analysis-card,
+:root[data-theme='dark'] .suggestion-card,
+:root[data-theme='dark'] .profile-sidebar,
+:root[data-theme='dark'] .profile-content,
+:root[data-theme='dark'] .score-display,
+:root[data-theme='dark'] .result-box,
+:root[data-theme='dark'] .timeline-card,
+:root[data-theme='dark'] .transcript-card,
+:root[data-theme='dark'] .auth-form,
+:root[data-theme='dark'] .pricing-card,
+:root[data-theme='dark'] .glass-card,
+:root[data-theme='dark'] .report-card,
+:root[data-theme='dark'] .fp-card,
+:root[data-theme='dark'] .rp-card {
+  background-color: var(--color-bg-secondary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .pricing-section,
+:root[data-theme='dark'] .pricing-card {
+  background: var(--color-bg-secondary);
+}
+
+:root[data-theme='dark'] .welcome-card {
+  background-color: #171326;
+  background-image: radial-gradient(circle at 88% 20%, rgba(139, 92, 246, .3), transparent 28%);
+}
+
+:root[data-theme='dark'] .sidebar {
+  box-shadow: 4px 0 24px rgba(0, 0, 0, .2);
+}
+
+:root[data-theme='dark'] .sidebar-logo,
+:root[data-theme='dark'] .dashboard-header h1,
+:root[data-theme='dark'] .resume-header h1,
+:root[data-theme='dark'] .interview-header h1,
+:root[data-theme='dark'] .stats-value,
+:root[data-theme='dark'] .section-title,
+:root[data-theme='dark'] .action-title,
+:root[data-theme='dark'] .analysis-item-title,
+:root[data-theme='dark'] .upload-box-title,
+:root[data-theme='dark'] .metric-value,
+:root[data-theme='dark'] .pricing-name,
+:root[data-theme='dark'] .pricing-section .section-header h2,
+:root[data-theme='dark'] .auth-header h1,
+:root[data-theme='dark'] .fp-card h1,
+:root[data-theme='dark'] .rp-card h1,
+:root[data-theme='dark'] .results-header h1 {
+  color: var(--color-text-primary) !important;
+  -webkit-text-fill-color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .sidebar-logo {
+  background: none;
+}
+
+:root[data-theme='dark'] .sidebar-nav-link {
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .sidebar-nav-link:hover,
+:root[data-theme='dark'] .sidebar-nav-link.active {
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, .16);
+}
+
+:root[data-theme='dark'] .navbar-landing {
+  background: rgba(8, 11, 18, .94) !important;
+  border-color: var(--color-border) !important;
+}
+
+:root[data-theme='dark'] .pricing-card-popular {
+  border-color: #8b5cf6 !important;
+}
+
+:root[data-theme='dark'] .pricing-price,
+:root[data-theme='dark'] .pricing-period,
+:root[data-theme='dark'] .pricing-features,
+:root[data-theme='dark'] .pricing-description {
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .pricing-icon,
+:root[data-theme='dark'] .pricing-features li::before,
+:root[data-theme='dark'] .pricing-cta,
+:root[data-theme='dark'] .stats-icon,
+:root[data-theme='dark'] .action-icon,
+:root[data-theme='dark'] .keyword-chip,
+:root[data-theme='dark'] .skill-tag,
+:root[data-theme='dark'] .badge,
+:root[data-theme='dark'] .status-pill {
+  background-color: rgba(139, 92, 246, .18) !important;
+  color: #c4b5fd !important;
+}
+
+:root[data-theme='dark'] .pricing-cta:hover {
+  background-color: rgba(139, 92, 246, .28) !important;
+  color: #ede9fe;
+}
+
+:root[data-theme='dark'] .pricing-card-popular .pricing-cta {
+  background: #7c3aed !important;
+  color: #fff !important;
+}
+
+:root[data-theme='dark'] .pricing-price > span:first-child,
+:root[data-theme='dark'] .score-card-value,
+:root[data-theme='dark'] .score-number,
+:root[data-theme='dark'] .stat-value {
+  color: #c4b5fd !important;
+}
+
+:root[data-theme='dark'] .btn-secondary,
+:root[data-theme='dark'] .btn-ghost {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .btn-secondary:hover,
+:root[data-theme='dark'] .btn-ghost:hover {
+  background: #20283a;
+  border-color: #8b5cf6;
+  color: #ddd6fe;
+}
+
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] textarea,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] .navbar-search input {
+  background-color: #0b101a !important;
+  border-color: var(--color-border-light) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:root[data-theme='dark'] input::placeholder,
+:root[data-theme='dark'] textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+:root[data-theme='dark'] .form-label {
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .history-table th {
+  background: #181e2b;
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .history-table td {
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .history-table tr:hover td,
+:root[data-theme='dark'] .profile-stats,
+:root[data-theme='dark'] .meta-item,
+:root[data-theme='dark'] .report-item,
+:root[data-theme='dark'] .feedback-item,
+:root[data-theme='dark'] .result-item,
+:root[data-theme='dark'] .interview-question-card {
+  background: #181e2b !important;
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .analysis-item,
+:root[data-theme='dark'] .setup-info-item,
+:root[data-theme='dark'] .profile-section-title,
+:root[data-theme='dark'] .profile-divider {
+  border-color: var(--color-border) !important;
+}
+
+:root[data-theme='dark'] .progress-bar,
+:root[data-theme='dark'] .score-progress {
+  background: #30264b;
+}
+
+:root[data-theme='dark'] .progress-item.pending {
+  background: #252d3b;
+  color: var(--color-text-tertiary);
+}
+
+:root[data-theme='dark'] .auth-header p,
+:root[data-theme='dark'] .fp-card .sub,
+:root[data-theme='dark'] .rp-card .sub {
+  color: var(--color-text-secondary);
+}
+
+:root[data-theme='dark'] .header h1,
+:root[data-theme='dark'] .header p {
+  color: #fff;
+}
+
+:root[data-theme='dark'] .features-section,
+:root[data-theme='dark'] .how-section {
+  background: var(--color-bg-primary) !important;
+}
+
+:root[data-theme='dark'] .hero-section,
+:root[data-theme='dark'] .cta-section {
+  background: var(--color-bg-primary) !important;
+}
+
+:root[data-theme='dark'] .hero-title,
+:root[data-theme='dark'] .navbar-logo {
+  color: var(--color-text-primary) !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+}
+
+:root[data-theme='dark'] .hero-subtitle,
+:root[data-theme='dark'] .navbar-links a {
+  color: var(--color-text-secondary) !important;
+}
+
+:root[data-theme='dark'] .navbar-links a:hover {
+  color: #c4b5fd !important;
+}
+
+:root[data-theme='dark'] .hero-particle-1,
+:root[data-theme='dark'] .hero-particle-2,
+:root[data-theme='dark'] .hero-particle-3 {
+  background: rgba(139, 92, 246, .14) !important;
+}
+
+:root[data-theme='dark'] .feature-card,
+:root[data-theme='dark'] .testimonial-card,
+:root[data-theme='dark'] .step-card {
+  background: var(--color-bg-secondary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .feature-card h3,
+:root[data-theme='dark'] .step-card h3 {
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .footer {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+  background: var(--color-bg-secondary) !important;
+}
+
+:root[data-theme='dark'] .cta-card {
+  background: #171326 !important;
+  border-color: #33264c !important;
+}
+
+:root[data-theme='dark'] .cta-card h2,
+:root[data-theme='dark'] .cta-card p {
+  color: var(--color-text-primary) !important;
+}
+
+:root[data-theme='light'] body {
+  background-color: #f5f7fb !important;
+  background-image: none;
+  color: #1f2937 !important;
+}
+
+:root[data-theme='light'] .card {
+  background: #fff;
+  border-color: #e5e7eb;
+  color: #1f2937;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+}
+
+:root[data-theme='light'] .card h2 {
+  color: #6d28d9;
+}
+
+:root[data-theme='light'] .card p,
+:root[data-theme='light'] .card li,
+:root[data-theme='light'] .footer {
+  color: #4b5563;
+}
+
+:root[data-theme='light'] .footer {
+  border-color: #e5e7eb;
+}
+
+:root[data-theme='light'] .header h1,
+:root[data-theme='light'] .header p {
+  color: #fff;
+}
+
+:root[data-theme='light'] .fp-container,
+:root[data-theme='light'] .rp-container {
+  background: #f5f7fb;
+}
+
+:root[data-theme='light'] .fp-card,
+:root[data-theme='light'] .rp-card {
+  background: #fff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .1);
+}
+
+:root[data-theme='light'] .fp-card h1,
+:root[data-theme='light'] .rp-card h1 {
+  color: #111827 !important;
+}
+
+:root[data-theme='light'] .fp-card .sub,
+:root[data-theme='light'] .rp-card .sub {
+  color: #6b7280;
+}
+
+:root[data-theme='light'] .fp-card input,
+:root[data-theme='light'] .rp-card input {
+  background: #fff !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+.brand-theme-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--color-bg-secondary, #fff);
+  color: var(--color-text-primary, #111827);
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-neon-purple);
+  color: var(--color-neon-purple);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(139, 92, 246, .45);
+  outline-offset: 2px;
+}
+
+.sidebar-header {
+  justify-content: space-between;
+}
+
+.auth-header .theme-toggle {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.theme-toggle-floating {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 2000;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-header {
+    gap: 12px;
+  }
+
+  .brand-theme-group {
+    gap: 8px;
+  }
+}
