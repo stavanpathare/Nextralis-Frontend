@@ -22,6 +22,13 @@ const CONFIG = {
     UPDATE_PROFILE: '/auth/profile',
     GET_USER_STATS: '/auth/stats',
 
+    // Subscription and payments
+    GET_PLANS: '/subscription/plans',
+    GET_SUBSCRIPTION: '/subscription/me',
+    CREATE_PAYMENT_ORDER: '/subscription/orders',
+    VERIFY_PAYMENT: '/subscription/verify',
+    GET_PAYMENT_STATUS: '/subscription/payments/:orderId',
+
     // Resume
     UPLOAD_RESUME: '/resume/upload',
     GET_RESUME: '/resume/:id',

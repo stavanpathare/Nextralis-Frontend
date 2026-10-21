@@ -170,14 +170,12 @@ class AuthManager {
       } catch (e) {
         console.error('[auth] login fallback token save failed', e);
       }
-      console.log('[auth] login: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
       try {
         localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
       } catch (e) {
         console.error('[auth] login fallback user save failed', e);
       }
-      console.log('[auth] login: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
       return { success: true, data: response };
     } catch (error) {
@@ -210,14 +208,12 @@ class AuthManager {
       } catch (e) {
         console.error('[auth] register fallback token save failed', e);
       }
-      console.log('[auth] register: api.setToken called, localStorage token now:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN));
       this.saveUser(user);
       try {
         localStorage.setItem(CONFIG.STORAGE_KEYS.USER, JSON.stringify(this.user));
       } catch (e) {
         console.error('[auth] register fallback user save failed', e);
       }
-      console.log('[auth] register: user saved to localStorage:', localStorage.getItem(CONFIG.STORAGE_KEYS.USER));
       this.token = token;
 
       return { success: true, data: response };

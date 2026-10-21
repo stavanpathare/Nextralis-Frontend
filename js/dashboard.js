@@ -13,7 +13,6 @@ class Dashboard {
     if (!authManager.isAuthenticated()) {
       // Attempt token-based recovery before forcing redirect
       const token = api.getToken();
-      console.log('[dashboard] auth check failed; token from api:', token, 'localStorage token:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN), 'authManager.user:', authManager.getCurrentUser());
       if (token) {
         const valid = await authManager.verifyToken();
         if (!valid) {
@@ -159,6 +158,7 @@ class Dashboard {
         console.warn('Could not load dashboard stats; using defaults.', error);
       }
       this.displayStats(stats);
+      await this.loadSubscriptionSummary();
 
       // Load resume history
       let resumeHistory = [];
@@ -192,6 +192,24 @@ class Dashboard {
       UIHelper.hideLoading();
       UIHelper.error('Failed to load dashboard data');
     }
+  }
+
+  async loadSubscriptionSummary() {
+    const container = document.getElementById('dashboard-subscription');
+    if (!container) return;
+    const response = await api.getSubscription();
+    const content = container.querySelector('p');
+    if (!content) return;
+
+    if (response.error || !response.data) {
+      content.textContent = 'Subscription usage is temporarily unavailable.';
+      return;
+    }
+
+    const subscription = response.data;
+    const usage = subscription.usage;
+    const limits = subscription.limits;
+    content.textContent = `${subscription.planName} · ${usage.resumeAnalyses}/${limits.resumeAnalyses} resume analyses · ${usage.voiceInterviews}/${limits.voiceInterviews} voice interviews used this month`;
   }
 
   /**

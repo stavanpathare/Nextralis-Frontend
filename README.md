@@ -54,6 +54,7 @@ The voice interview uses browser native APIs:
 - ✅ Voice interview with speech recognition
 - ✅ Interview results and feedback
 - ✅ User profile management
+- ✅ Subscription usage and one-time Razorpay checkout
 - ✅ Real-time notifications (toasts)
 - ✅ Password strength indicator
 - ✅ Form validation
@@ -68,6 +69,8 @@ The voice interview uses browser native APIs:
 - Forms validate on client-side before submission
 - API validation happens on backend
 - CSRF protection should be configured on backend
+- Subscription limits and prices are loaded from the backend; frontend plan data is display-only
+- Configure Razorpay credentials only on the backend host (see `../Backend/README.md`)
 
 ## 🐛 Browser Support
 

@@ -12,6 +12,7 @@ class ResumeAnalyzer {
     window.resumeAnalyzerInstance = this;
 
     this.currentFile = null;
+    this.resumeOperationKey = null;
     this.analysisResults = null;
     this.isAnalyzing = false;
     this.listenersBound = false;
@@ -131,6 +132,7 @@ class ResumeAnalyzer {
     }
 
     this.currentFile = file;
+    this.resumeOperationKey = null;
 
     const uploadBox = document.getElementById('upload-box');
     const uploadStatus = document.getElementById('upload-status-value');
@@ -180,6 +182,9 @@ class ResumeAnalyzer {
     const jobDescription = document.getElementById('job-description-input')?.value?.trim() || '';
 
     this.isAnalyzing = true;
+    if (!this.resumeOperationKey) {
+      this.resumeOperationKey = window.crypto.randomUUID();
+    }
     this.setAnalyzeButtonState(true);
     const uploadStatus = document.getElementById('upload-status-value');
     if (uploadStatus) {
@@ -189,12 +194,27 @@ class ResumeAnalyzer {
 
     try {
       UIHelper.showLoading('Uploading and analyzing resume...');
-      const uploadResponse = await api.uploadResume(this.currentFile, { role, jobDescription });
+      const uploadResponse = await api.uploadResume(
+        this.currentFile,
+        { role, jobDescription },
+        this.resumeOperationKey
+      );
       console.log('[UPLOAD RESPONSE]', uploadResponse);
 
       if (uploadResponse?.error || uploadResponse?.success === false) {
+        if (!['NETWORK_ERROR', 'OPERATION_IN_PROGRESS'].includes(uploadResponse?.code)) {
+          this.resumeOperationKey = null;
+        }
         UIHelper.hideLoading();
-        UIHelper.error(uploadResponse?.error || uploadResponse?.message || 'Failed to analyze resume');
+        if (uploadResponse?.code === 'OPERATION_ALREADY_PROCESSED' && uploadResponse.resourceId) {
+          window.location.href = `resume-analysis.html?id=${encodeURIComponent(uploadResponse.resourceId)}`;
+          return;
+        }
+        if (uploadResponse?.code === 'QUOTA_EXCEEDED') {
+          UIHelper.showQuotaError(uploadResponse.error);
+        } else {
+          UIHelper.error(uploadResponse?.error || uploadResponse?.message || 'Failed to analyze resume');
+        }
         return;
       }
 
@@ -203,10 +223,12 @@ class ResumeAnalyzer {
 
       if (!resumeId) {
         console.error('Resume ID missing', resumeRecord);
+        this.resumeOperationKey = null;
         UIHelper.error('Resume created but no Resume ID returned.');
         return;
       }
 
+      this.resumeOperationKey = null;
       this.analysisResults = this.normalizeAnalysisPayload(resumeRecord);
       this.updateUrl(resumeId);
       this.displayResults(this.analysisResults);

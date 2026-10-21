@@ -1,0 +1,277 @@
+.subscription-main {
+  padding: var(--spacing-xl);
+}
+
+.subscription-container,
+.checkout-container {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+}
+
+.subscription-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.subscription-header h1,
+.checkout-card h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.subscription-header p,
+.checkout-card > p,
+.checkout-note {
+  color: var(--color-text-secondary);
+}
+
+.subscription-message {
+  padding: var(--spacing-lg);
+  color: var(--color-text-secondary);
+}
+
+.subscription-error {
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.25);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.subscription-overview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-lg);
+  background: rgba(26, 31, 58, 0.58);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.subscription-overview p {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.current-plan-card,
+.plan-card,
+.checkout-card {
+  background: rgba(26, 31, 58, 0.58);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.current-plan-card {
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.current-plan-heading,
+.usage-heading,
+.plan-card-header,
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.current-plan-heading h2,
+.plan-card h2 {
+  margin: 0;
+}
+
+.plan-status {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  color: var(--color-neon-blue);
+  font-size: var(--font-sm);
+  text-transform: capitalize;
+}
+
+.usage-grid,
+.plan-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.usage-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: var(--spacing-xl);
+}
+
+.usage-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+}
+
+.usage-item p {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.plan-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl);
+}
+
+.plan-card-current {
+  border-color: var(--color-neon-blue);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.14);
+}
+
+.plan-card-description {
+  color: var(--color-text-secondary);
+  min-height: 3em;
+}
+
+.plan-card-price {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  margin: var(--spacing-md) 0;
+}
+
+.plan-card-features {
+  padding-left: 1.25rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.plan-card-actions {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin-top: auto;
+  padding-top: var(--spacing-lg);
+}
+
+.plan-card-actions .btn {
+  width: 100%;
+}
+
+.unavailable-note,
+.renewal-note,
+.checkout-note {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+.checkout-container {
+  max-width: 680px;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.checkout-back {
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-neon-blue);
+}
+
+.checkout-card {
+  padding: clamp(24px, 5vw, 48px);
+}
+
+.checkout-summary {
+  padding: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.checkout-summary strong {
+  display: block;
+  font-size: var(--font-xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.checkout-customer {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.checkout-origin-note {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+
+.checkout-card .btn {
+  width: 100%;
+}
+
+.checkout-note {
+  margin-top: var(--spacing-lg);
+}
+
+.result-mark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  margin-bottom: var(--spacing-lg);
+  color: white;
+  background: var(--gradient-primary);
+  font-size: var(--font-2xl);
+  font-weight: 700;
+}
+
+.result-mark-failed {
+  background: linear-gradient(135deg, #f97316, #dc2626);
+}
+
+.checkout-actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xl);
+}
+
+.checkout-actions .btn {
+  width: auto;
+}
+
+@media (max-width: 900px) {
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-card-description {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .subscription-main {
+    padding: var(--spacing-md);
+  }
+
+  .subscription-container,
+  .checkout-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .usage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .current-plan-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

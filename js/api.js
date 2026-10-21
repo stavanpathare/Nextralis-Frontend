@@ -16,10 +16,8 @@ class APIClient {
     try {
       if (token) {
         localStorage.setItem(CONFIG.STORAGE_KEYS.TOKEN, token);
-        console.log('[api] setToken stored', CONFIG.STORAGE_KEYS.TOKEN, token);
       } else {
         localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
-        console.log('[api] setToken removed token');
       }
     } catch (e) {
       console.error('[api] setToken error saving token to localStorage', e);
@@ -33,14 +31,10 @@ class APIClient {
     if (!this.token) {
       try {
         this.token = localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN);
-        console.log('[api] getToken loaded from localStorage', this.token);
       } catch (e) {
         console.error('[api] getToken error reading localStorage', e);
         this.token = null;
       }
-    } else {
-      // in-memory token
-      // console.log('[api] getToken in-memory', this.token);
     }
     return this.token;
   }
@@ -73,6 +67,7 @@ class APIClient {
    */
   handleError(error) {
     console.error('API Error:', error);
+    const responseData = error.response?.data || {};
 
     if (error.response?.status === 401) {
       // Token expired or unauthorized
@@ -81,18 +76,25 @@ class APIClient {
       if (!window.location.pathname.endsWith('login.html')) {
         window.location.href = 'login.html';
       }
-      return { error: 'Session expired. Please login again.' };
+      return { error: 'Session expired. Please login again.', code: responseData.code || 'UNAUTHORIZED' };
     }
 
-    if (error.response?.data?.message) {
-      return { error: error.response.data.message };
+    if (responseData.message) {
+      return {
+        error: responseData.message,
+        code: responseData.code || 'API_ERROR',
+        feature: responseData.feature,
+        limit: responseData.limit,
+        remaining: responseData.remaining,
+        resourceId: responseData.resourceId,
+      };
     }
 
     if (error.message) {
-      return { error: error.message };
+      return { error: error.message, code: error.response ? 'API_ERROR' : 'NETWORK_ERROR' };
     }
 
-    return { error: 'An error occurred. Please try again.' };
+    return { error: 'An error occurred. Please try again.', code: 'NETWORK_ERROR' };
   }
 
   /**
@@ -119,11 +121,12 @@ class APIClient {
   async post(endpoint, data = {}, options = {}) {
     try {
       const url = this.buildURL(endpoint);
+      const { headers = {}, ...fetchOptions } = options;
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: { ...this.getHeaders(), ...headers },
         body: JSON.stringify(data),
-        ...options,
+        ...fetchOptions,
       });
 
       return this.handleResponse(response);
@@ -176,8 +179,13 @@ class APIClient {
     try {
       const url = this.buildURL(endpoint);
       const formData = new FormData();
-      const fieldName = options.fieldName || 'file';
-      const metadata = options.metadata || {};
+      const {
+        fieldName = 'file',
+        metadata = {},
+        idempotencyKey,
+        headers: additionalHeaders = {},
+        ...fetchOptions
+      } = options;
       formData.append(fieldName, file);
 
       Object.entries(metadata).forEach(([key, value]) => {
@@ -188,11 +196,14 @@ class APIClient {
 
       const headers = { Authorization: `Bearer ${this.getToken()}` };
 
+      Object.assign(headers, additionalHeaders);
+      if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
+
       const response = await fetch(url, {
         method: 'POST',
         headers,
         body: formData,
-        ...options,
+        ...fetchOptions,
       });
 
       return this.handleResponse(response);
@@ -264,12 +275,36 @@ class APIClient {
     return this.get(CONFIG.ENDPOINTS.GET_USER_STATS);
   }
 
+  async getPlanCatalogue() {
+    return this.get(CONFIG.ENDPOINTS.GET_PLANS);
+  }
+
+  async getSubscription() {
+    return this.get(CONFIG.ENDPOINTS.GET_SUBSCRIPTION);
+  }
+
+  async createPaymentOrder(planId, billingDuration) {
+    return this.post(CONFIG.ENDPOINTS.CREATE_PAYMENT_ORDER, { planId, billingDuration });
+  }
+
+  async verifyPayment(paymentData) {
+    return this.post(CONFIG.ENDPOINTS.VERIFY_PAYMENT, paymentData);
+  }
+
+  async getPaymentStatus(orderId) {
+    return this.get(CONFIG.ENDPOINTS.GET_PAYMENT_STATUS.replace(':orderId', encodeURIComponent(orderId)));
+  }
+
   /* ============================================
      RESUME ENDPOINTS
      ============================================ */
 
-  async uploadResume(file, metadata = {}) {
-    return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, { fieldName: 'resume', metadata });
+  async uploadResume(file, metadata = {}, idempotencyKey) {
+    return this.uploadFile(CONFIG.ENDPOINTS.UPLOAD_RESUME, file, {
+      fieldName: 'resume',
+      metadata,
+      idempotencyKey,
+    });
   }
 
   // analyzeResume removed — upload returns analysis directly from server

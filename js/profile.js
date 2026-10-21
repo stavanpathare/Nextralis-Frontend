@@ -110,9 +110,18 @@ class ProfileManager {
         console.warn('Could not load profile stats; using available profile data.', error);
       }
 
+      let subscription = null;
+      try {
+        const subscriptionResponse = await api.getSubscription();
+        if (subscriptionResponse?.error) throw new Error(subscriptionResponse.error);
+        subscription = subscriptionResponse?.data || null;
+      } catch (error) {
+        console.error('[Profile API Error] subscription summary', error);
+      }
+
       this.user = userData;
       authManager.saveUser(userData);
-      this.displayProfile(userData, stats);
+      this.displayProfile(userData, stats, subscription);
       UIHelper.hideLoading();
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -138,7 +147,7 @@ class ProfileManager {
   /**
    * Display profile
    */
-  displayProfile(userData, stats = {}) {
+  displayProfile(userData, stats = {}, subscription = null) {
     // Update display elements
     const profileCard = document.querySelector('.profile-card');
     if (profileCard) {
@@ -146,9 +155,9 @@ class ProfileManager {
         ? `<img src="${userData.profileImage}" alt="${userData.name || 'User'}" />`
         : this.getAvatarInitials(userData.name);
 
-      const planLabel = userData.subscriptionPlan
-        ? `${userData.subscriptionPlan.charAt(0).toUpperCase()}${userData.subscriptionPlan.slice(1)} Plan`
-        : 'Free Plan';
+      const planLabel = subscription
+        ? `${subscription.planName} Plan${subscription.status === 'expired' ? ' · Expired' : ''}`
+        : 'Plan unavailable';
 
       profileCard.innerHTML = `
         <div class="profile-avatar">${avatarContent}</div>

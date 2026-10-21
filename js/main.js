@@ -90,6 +90,20 @@ class UIHelper {
     this.showToast(message, 'error');
   }
 
+  static showQuotaError(message) {
+    this.showToast(message, 'error', 7000);
+    const toast = document.querySelector('body > .toast:last-of-type');
+    if (!toast) return;
+    const link = document.createElement('a');
+    link.href = 'subscription.html';
+    link.textContent = 'View plans';
+    link.style.color = 'white';
+    link.style.display = 'block';
+    link.style.marginTop = '8px';
+    link.style.textDecoration = 'underline';
+    toast.appendChild(link);
+  }
+
   /**
    * Show warning toast
    */

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment not completed - Nextralis</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/subscription.css" />
+    <script src="js/theme.js"></script>
+    <link rel="stylesheet" href="css/theme.css" />
+  </head>
+  <body>
+    <main class="checkout-container">
+      <section class="checkout-card" aria-live="polite">
+        <div class="result-mark result-mark-failed" aria-hidden="true">!</div>
+        <h1 id="payment-result-heading">Payment not completed</h1>
+        <p id="payment-result-message">Your plan has not changed based on this checkout attempt. Any existing active access remains unchanged.</p>
+        <p class="subscription-error" id="payment-result-error" role="alert" hidden></p>
+        <div class="checkout-actions">
+          <a class="btn btn-primary" href="subscription.html">Return to plans</a>
+          <a class="btn btn-secondary" href="dashboard.html">Back to dashboard</a>
+        </div>
+      </section>
+    </main>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/payment-result.js"></script>
+  </body>
+</html>

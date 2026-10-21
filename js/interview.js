@@ -23,6 +23,7 @@ class VoiceInterview {
     this.synthesis = window.speechSynthesis;
     this.isMuted = false;
     this.pendingSpeech = null;
+    this.startOperationKey = null;
     this.init();
   }
 
@@ -163,20 +164,41 @@ class VoiceInterview {
     UIHelper.showLoading('Preparing your interview...');
 
     try {
+      if (!this.startOperationKey) {
+        this.startOperationKey = window.crypto.randomUUID();
+      }
       const response = await api.post(CONFIG.ENDPOINTS.START_INTERVIEW, {
         role: jobRole,
         experienceLevel,
         interviewType,
         difficulty,
+      }, {
+        headers: { 'Idempotency-Key': this.startOperationKey },
       });
 
       if (response?.error) {
+        if (!['NETWORK_ERROR', 'OPERATION_IN_PROGRESS'].includes(response.code)) {
+          this.startOperationKey = null;
+        }
         UIHelper.hideLoading();
-        UIHelper.error(response.error);
+        if (response.code === 'OPERATION_ALREADY_PROCESSED' && response.resourceId) {
+          localStorage.setItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION, JSON.stringify({
+            interviewId: response.resourceId,
+            meta: {},
+          }));
+          window.location.href = 'voice-interview.html?live=true';
+          return;
+        }
+        if (response.code === 'QUOTA_EXCEEDED') {
+          UIHelper.showQuotaError(response.error);
+        } else {
+          UIHelper.error(response.error);
+        }
         if (startBtn) startBtn.disabled = false;
         return;
       }
 
+      this.startOperationKey = null;
       const interviewId = response.interviewId || response.data?.interviewId || response.id || response._id;
       const interviewSession = { interviewId, meta: response };
       localStorage.setItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION, JSON.stringify(interviewSession));

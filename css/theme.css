@@ -434,6 +434,71 @@
   z-index: 2000;
 }
 
+:root[data-theme='light'] .subscription-overview,
+:root[data-theme='light'] .current-plan-card,
+:root[data-theme='light'] .plan-card,
+:root[data-theme='light'] .checkout-card {
+  background: #fff;
+  border-color: #e5e7eb;
+  color: #111827;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .08);
+}
+
+:root[data-theme='light'] .current-plan-card h2,
+:root[data-theme='light'] .plan-card h2,
+:root[data-theme='light'] .checkout-card h1,
+:root[data-theme='light'] .subscription-header h1,
+:root[data-theme='light'] .subscription-overview strong {
+  color: #111827;
+}
+
+:root[data-theme='light'] .current-plan-card p,
+:root[data-theme='light'] .plan-card p,
+:root[data-theme='light'] .plan-card-features,
+:root[data-theme='light'] .checkout-card > p,
+:root[data-theme='light'] .checkout-customer,
+:root[data-theme='light'] .subscription-overview p,
+:root[data-theme='light'] .subscription-header p {
+  color: #4b5563;
+}
+
+:root[data-theme='light'] .usage-item,
+:root[data-theme='light'] .checkout-summary {
+  background: #f8fafc;
+  color: #111827;
+}
+
+:root[data-theme='light'] .usage-item p {
+  color: #6b7280;
+}
+
+:root[data-theme='light'] .plan-status {
+  border-color: #ddd6fe;
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+:root[data-theme='light'] .subscription-error {
+  color: #991b1b;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+:root[data-theme='dark'] .subscription-overview,
+:root[data-theme='dark'] .current-plan-card,
+:root[data-theme='dark'] .plan-card,
+:root[data-theme='dark'] .checkout-card {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .usage-item,
+:root[data-theme='dark'] .checkout-summary {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
 @media (max-width: 1024px) {
   .sidebar-header {
     gap: 12px;
