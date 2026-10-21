@@ -116,7 +116,7 @@ class SubscriptionPage {
 
   createPlanCard(plan, subscription, activePaidPlan) {
     const card = document.createElement('article');
-    card.className = `plan-card${plan.id === subscription.effectivePlan ? ' plan-card-current' : ''}`;
+    card.className = `plan-card${plan.id === subscription.effectivePlan ? ' plan-card-current' : ''}${plan.id === 'pro' ? ' plan-card-recommended' : ''}`;
     const heading = document.createElement('div');
     heading.className = 'plan-card-header';
     const name = document.createElement('h2');
@@ -129,6 +129,9 @@ class SubscriptionPage {
       heading.appendChild(current);
     }
 
+    const recommendation = document.createElement('span');
+    recommendation.className = 'plan-recommendation';
+    recommendation.textContent = '★ Recommended';
     const description = document.createElement('p');
     description.className = 'plan-card-description';
     description.textContent = plan.description;
@@ -167,6 +170,12 @@ class SubscriptionPage {
           window.location.href = `checkout.html?${query.toString()}`;
         });
         actions.appendChild(button);
+        if (duration === 'annual') {
+          const discountNote = document.createElement('span');
+          discountNote.className = 'annual-discount-note';
+          discountNote.textContent = '10% off annual plans';
+          actions.appendChild(discountNote);
+        }
       }
       if (activePaidPlan && plan.id !== subscription.effectivePlan) {
         const note = document.createElement('p');
@@ -176,7 +185,9 @@ class SubscriptionPage {
       }
     }
 
-    card.append(heading, description, limits, features, actions);
+    if (plan.id === 'pro') card.append(recommendation);
+    card.append(heading);
+    card.append(description, limits, features, actions);
     return card;
   }
 }

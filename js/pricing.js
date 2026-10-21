@@ -15,8 +15,9 @@ const renderPublicPricing = async () => {
 
   const cards = response.data.map((plan, index) => {
     const card = document.createElement('article');
-    card.className = `pricing-card${index === 1 ? ' pricing-card-popular' : ''}`;
-    if (index === 1) {
+    const isRecommended = plan.id === 'pro' || index === 1;
+    card.className = `pricing-card${isRecommended ? ' pricing-card-popular' : ''}`;
+    if (isRecommended) {
       const popular = document.createElement('div');
       popular.className = 'pricing-popular-badge';
       popular.textContent = '★ Most Popular';
@@ -25,6 +26,9 @@ const renderPublicPricing = async () => {
     const title = document.createElement('h3');
     title.className = 'pricing-name';
     title.textContent = plan.name;
+    const recommendation = document.createElement('span');
+    recommendation.className = 'pricing-recommendation';
+    recommendation.textContent = 'Recommended';
     const description = document.createElement('p');
     description.className = 'pricing-description';
     description.textContent = plan.description;
@@ -65,7 +69,9 @@ const renderPublicPricing = async () => {
     action.className = 'pricing-cta';
     action.href = 'register.html';
     action.textContent = 'Get Started →';
-    card.append(title, description, priceLine, featureList, action);
+    card.append(title);
+    if (plan.id === 'pro') card.append(recommendation);
+    card.append(description, priceLine, featureList, action);
     return card;
   });
   grid.replaceChildren(...cards);
