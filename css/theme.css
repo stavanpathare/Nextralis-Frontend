@@ -145,6 +145,7 @@
 
 :root[data-theme='dark'] .pricing-price,
 :root[data-theme='dark'] .pricing-period,
+:root[data-theme='dark'] .pricing-option,
 :root[data-theme='dark'] .pricing-features,
 :root[data-theme='dark'] .pricing-description {
   color: var(--color-text-secondary);
@@ -174,6 +175,7 @@
 }
 
 :root[data-theme='dark'] .pricing-price > span:first-child,
+:root[data-theme='dark'] .pricing-option strong,
 :root[data-theme='dark'] .score-card-value,
 :root[data-theme='dark'] .score-number,
 :root[data-theme='dark'] .stat-value {

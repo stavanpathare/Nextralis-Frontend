@@ -1,3 +1,20 @@
+const buildRazorpayCheckoutOptions = (order, planName, handler, onDismiss) => ({
+  key: order.keyId,
+  amount: order.amountPaise,
+  currency: order.currency,
+  name: 'Nextralis',
+  description: `${planName} · ${order.durationDays} days`,
+  order_id: order.orderId,
+  prefill: { name: order.customer.name, email: order.customer.email },
+  theme: { color: '#4f46e5' },
+  handler,
+  modal: { ondismiss: onDismiss },
+});
+
+const getRazorpayMode = (keyId) => (
+  keyId.startsWith('rzp_test_') ? 'test' : keyId.startsWith('rzp_live_') ? 'live' : 'unknown'
+);
+
 class CheckoutPage {
   constructor() {
     this.params = new URLSearchParams(window.location.search);
@@ -74,6 +91,22 @@ class CheckoutPage {
     this.error.hidden = false;
   }
 
+  showPendingOrder(pendingOrder) {
+    if (!pendingOrder?.planId || !pendingOrder?.billingDuration) return;
+    const plansLink = document.createElement('a');
+    plansLink.href = `checkout.html?${new URLSearchParams({
+      plan: pendingOrder.planId,
+      duration: pendingOrder.billingDuration,
+    }).toString()}`;
+    plansLink.textContent = `Continue ${pendingOrder.planId} ${pendingOrder.billingDuration} checkout`;
+    plansLink.className = 'checkout-pending-link';
+    this.error.replaceChildren(
+      document.createTextNode('A previous payment order is still pending. Use that order to continue, or complete/cancel it in Razorpay before choosing another plan. '),
+      plansLink
+    );
+    this.error.hidden = false;
+  }
+
   async startCheckout() {
     if (this.pendingPayment) {
       await this.verifyPendingPayment();
@@ -86,9 +119,27 @@ class CheckoutPage {
     }
     this.button.disabled = true;
     this.button.textContent = 'Preparing secure payment…';
-    const orderResponse = await api.createPaymentOrder(this.planId, this.duration);
+    let orderResponse;
+    try {
+      orderResponse = await api.createPaymentOrder(this.planId, this.duration);
+    } catch (error) {
+      const pendingOrder = error.response?.data?.pendingOrder;
+      if (error.response?.data?.code === 'PAYMENT_ORDER_PENDING' && pendingOrder) {
+        this.showPendingOrder(pendingOrder);
+      } else {
+        this.showError(error.message || 'Could not contact the payment service. Check your connection and try again.');
+      }
+      console.error('Could not create payment order.', error);
+      this.button.disabled = false;
+      this.button.textContent = 'Continue to payment';
+      return;
+    }
     if (orderResponse.error) {
-      this.showError(orderResponse.error);
+      if (orderResponse.code === 'PAYMENT_ORDER_PENDING' && orderResponse.pendingOrder) {
+        this.showPendingOrder(orderResponse.pendingOrder);
+      } else {
+        this.showError(orderResponse.error);
+      }
       this.button.disabled = false;
       this.button.textContent = 'Continue to payment';
       return;
@@ -101,31 +152,43 @@ class CheckoutPage {
       this.button.textContent = 'Continue to payment';
       return;
     }
+    this.render({
+      amountRupees: order.amountPaise / 100,
+      currency: order.currency,
+    });
 
     let checkoutFailed = false;
-    const checkout = new window.Razorpay({
-      key: order.keyId,
-      amount: order.amountPaise,
-      currency: order.currency,
-      name: 'Nextralis',
-      description: `${this.selectedPlan.name} · ${order.durationDays} days`,
-      order_id: order.orderId,
-      prefill: { name: order.customer.name, email: order.customer.email },
-      theme: { color: '#4f46e5' },
-      handler: async (payment) => {
-        this.pendingPayment = payment;
-        await this.verifyPendingPayment();
-      },
-      modal: {
-        ondismiss: () => {
-          const reason = checkoutFailed ? 'checkout_error' : 'cancelled';
-          window.location.href = `payment-failure.html?orderId=${encodeURIComponent(order.orderId)}&reason=${reason}`;
-        },
-      },
-    });
+    const onPayment = async (payment) => {
+      this.pendingPayment = payment;
+      await this.verifyPendingPayment();
+    };
+    const onDismiss = () => {
+      const reason = checkoutFailed ? 'checkout_error' : 'cancelled';
+      window.location.href = `payment-failure.html?orderId=${encodeURIComponent(order.orderId)}&reason=${reason}`;
+    };
+    const checkoutOptions = buildRazorpayCheckoutOptions(
+      order,
+      this.selectedPlan.name,
+      onPayment,
+      onDismiss
+    );
+    const checkout = new window.Razorpay(checkoutOptions);
     checkout.on('payment.failed', (response) => {
       checkoutFailed = true;
       const reason = response?.error?.description || response?.error?.reason;
+      console.warn('[payments] Razorpay checkout failed', {
+        plan: order.planId,
+        billingDuration: order.billingDuration,
+        amountPaise: order.amountPaise,
+        currency: order.currency,
+        orderId: order.orderId,
+        razorpayMode: getRazorpayMode(order.keyId),
+        code: response?.error?.code,
+        step: response?.error?.step,
+        reason: response?.error?.reason,
+        source: response?.error?.source,
+        providerOrderId: response?.error?.metadata?.order_id,
+      });
       this.showError(reason
         ? `Razorpay could not complete checkout: ${reason}`
         : 'Razorpay could not complete checkout. Your plan has not been activated.');
@@ -160,4 +223,8 @@ class CheckoutPage {
   }
 }
 
-new CheckoutPage();
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { buildRazorpayCheckoutOptions, getRazorpayMode };
+}
+
+if (typeof document !== 'undefined') new CheckoutPage();

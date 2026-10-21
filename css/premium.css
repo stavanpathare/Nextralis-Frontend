@@ -38,6 +38,9 @@ footer { color:#6b7280; background:transparent; padding:24px; margin-left:260px;
 .pricing-description { min-height:48px; margin-bottom:14px; color:#64748b; font-size:.9rem; line-height:1.5; }
 .pricing-price { display:flex; align-items:baseline; gap:8px; padding-bottom:14px; border-bottom:1px solid #edf0f4; color:#64748b; font-size:.9rem; }
 .pricing-price > span:first-child { color:#4f46e5; font-size:2.25rem; font-weight:800; letter-spacing:-.05em; line-height:1.2; }
+.pricing-price-options { display:grid; align-items:stretch; gap:5px; }
+.pricing-option { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin:0; color:#64748b; font-size:1rem; }
+.pricing-option strong { color:#4f46e5; font-size:1.55rem; font-weight:800; letter-spacing:-.04em; line-height:1.25; white-space:nowrap; }
 .pricing-period { white-space:nowrap; }
 .pricing-features { display:grid; gap:10px; margin:16px 0 20px; padding:0; list-style:none; color:#475569; font-size:.86rem; }
 .pricing-features li { position:relative; padding-left:26px; line-height:1.45; }

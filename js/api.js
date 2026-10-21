@@ -87,6 +87,7 @@ class APIClient {
         limit: responseData.limit,
         remaining: responseData.remaining,
         resourceId: responseData.resourceId,
+        pendingOrder: responseData.pendingOrder,
       };
     }
 
@@ -109,7 +110,7 @@ class APIClient {
         ...options,
       });
 
-      return this.handleResponse(response);
+      return await this.handleResponse(response);
     } catch (error) {
       return this.handleError(error);
     }
@@ -129,7 +130,7 @@ class APIClient {
         ...fetchOptions,
       });
 
-      return this.handleResponse(response);
+      return await this.handleResponse(response);
     } catch (error) {
       return this.handleError(error);
     }
@@ -148,7 +149,7 @@ class APIClient {
         ...options,
       });
 
-      return this.handleResponse(response);
+      return await this.handleResponse(response);
     } catch (error) {
       return this.handleError(error);
     }
@@ -166,7 +167,7 @@ class APIClient {
         ...options,
       });
 
-      return this.handleResponse(response);
+      return await this.handleResponse(response);
     } catch (error) {
       return this.handleError(error);
     }
@@ -206,7 +207,7 @@ class APIClient {
         ...fetchOptions,
       });
 
-      return this.handleResponse(response);
+      return await this.handleResponse(response);
     } catch (error) {
       return this.handleError(error);
     }

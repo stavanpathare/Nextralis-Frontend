@@ -28,8 +28,8 @@ const renderPublicPricing = async () => {
     const description = document.createElement('p');
     description.className = 'pricing-description';
     description.textContent = plan.description;
-    const priceLine = document.createElement('p');
-    priceLine.className = 'pricing-price';
+    const priceLine = document.createElement(plan.id === 'basic' ? 'p' : 'div');
+    priceLine.className = `pricing-price${plan.id === 'basic' ? '' : ' pricing-price-options'}`;
     const featureList = document.createElement('ul');
     featureList.className = 'pricing-features';
     const quota = document.createElement('li');
@@ -49,12 +49,16 @@ const renderPublicPricing = async () => {
       period.textContent = '/ free';
       priceLine.append(amount, period);
     } else {
-      const priceValues = Object.entries(plan.prices).map(([duration, price]) =>
-        `${duration === 'monthly' ? '30 days' : '365 days'}: ${formatPublicPrice(price)}`
-      );
-      const amount = document.createElement('span');
-      amount.textContent = priceValues.join(' · ');
-      priceLine.appendChild(amount);
+      for (const [duration, price] of Object.entries(plan.prices)) {
+        const option = document.createElement('p');
+        option.className = 'pricing-option';
+        const label = document.createElement('span');
+        label.textContent = `${duration === 'monthly' ? '30 days' : '365 days'}:`;
+        const amount = document.createElement('strong');
+        amount.textContent = formatPublicPrice(price);
+        option.append(label, amount);
+        priceLine.appendChild(option);
+      }
     }
 
     const action = document.createElement('a');
