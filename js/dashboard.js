@@ -280,11 +280,12 @@ class Dashboard {
       .map(
         (interview) => {
           const interviewId = interview.id || interview._id || interview.interviewId;
+          const score = interview.finalScore ?? interview.score ?? 'N/A';
           return `
       <tr>
         <td>${interview.jobRole || interview.role || 'N/A'}</td>
         <td>${UIHelper.formatDate(interview.interviewDate || interview.createdAt)}</td>
-        <td>${interview.score || 'N/A'}</td>
+        <td>${score}</td>
         <td>
           <span class="table-status ${interview.status === 'completed' ? 'completed' : 'pending'}">
             ${interview.status || 'pending'}
