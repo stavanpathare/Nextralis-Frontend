@@ -197,19 +197,43 @@ class Dashboard {
   async loadSubscriptionSummary() {
     const container = document.getElementById('dashboard-subscription');
     if (!container) return;
-    const response = await api.getSubscription();
-    const content = container.querySelector('p');
-    if (!content) return;
 
-    if (response.error || !response.data) {
-      content.textContent = 'Subscription usage is temporarily unavailable.';
-      return;
+    try {
+      const response = await api.getSubscription();
+      if (response.error || !response.data) {
+        throw new Error(response.error || 'Subscription info unavailable');
+      }
+
+      const subscription = response.data;
+      const usage = subscription.usage || { resumeAnalyses: 0, voiceInterviews: 0 };
+      const limits = subscription.limits || { resumeAnalyses: 3, voiceInterviews: 2 };
+      const planName = subscription.planName || 'Basic';
+      const usageText = `${usage.resumeAnalyses}/${limits.resumeAnalyses} resume analyses · ${usage.voiceInterviews}/${limits.voiceInterviews} voice interviews`;
+      const progressValue = Math.min(100, Math.max(20, ((usage.resumeAnalyses + usage.voiceInterviews) / Math.max(1, (limits.resumeAnalyses + limits.voiceInterviews))) * 100));
+
+      container.innerHTML = `
+        <div class="plan-header">
+          <span class="plan-badge">👑</span>
+          <strong>Your plan</strong>
+        </div>
+        <div class="plan-name">${planName}</div>
+        <p>${usageText}</p>
+        <div class="plan-progress"><span style="width: ${progressValue}%"></span></div>
+        <a class="section-link" href="subscription.html">Manage subscription</a>
+      `;
+    } catch (error) {
+      console.error('Could not load subscription overview.', error);
+      container.innerHTML = `
+        <div class="plan-header">
+          <span class="plan-badge">👑</span>
+          <strong>Your plan</strong>
+        </div>
+        <div class="plan-name">Basic</div>
+        <p>Subscription usage is temporarily unavailable.</p>
+        <div class="plan-progress"><span style="width: 24%"></span></div>
+        <a class="section-link" href="subscription.html">Manage subscription</a>
+      `;
     }
-
-    const subscription = response.data;
-    const usage = subscription.usage;
-    const limits = subscription.limits;
-    content.textContent = `${subscription.planName} · ${usage.resumeAnalyses}/${limits.resumeAnalyses} resume analyses · ${usage.voiceInterviews}/${limits.voiceInterviews} voice interviews used this month`;
   }
 
   /**

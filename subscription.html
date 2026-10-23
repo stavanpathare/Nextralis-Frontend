@@ -17,13 +17,22 @@
     <div class="dashboard-layout">
       <aside class="sidebar">
         <div class="sidebar-header"><div class="sidebar-logo">Nextralis</div></div>
+
+        <section class="subscription-overview" id="dashboard-subscription" aria-live="polite">
+          <div>
+            <strong>Your plan</strong>
+            <p>Loading subscription usage…</p>
+          </div>
+          <a class="section-link" href="subscription.html">Manage subscription</a>
+        </section>
+
         <nav class="sidebar-nav">
           <li class="sidebar-nav-item"><a href="dashboard.html" class="sidebar-nav-link"><span class="sidebar-nav-icon">📊</span>Dashboard</a></li>
           <li class="sidebar-nav-item"><a href="resume-analysis.html" class="sidebar-nav-link"><span class="sidebar-nav-icon">📄</span>Resume</a></li>
           <li class="sidebar-nav-item"><a href="voice-interview.html" class="sidebar-nav-link"><span class="sidebar-nav-icon">🎤</span>Interview</a></li>
           <li class="sidebar-nav-item"><a href="subscription.html" class="sidebar-nav-link active"><span class="sidebar-nav-icon">💳</span>Subscription</a></li>
           <li class="sidebar-nav-item"><a href="profile.html" class="sidebar-nav-link"><span class="sidebar-nav-icon">👤</span>Profile</a></li>
-          <li class="sidebar-nav-item"><button type="button" class="sidebar-nav-link sidebar-logout-link" data-action="logout"><span class="sidebar-nav-icon">↪</span>Logout</button></li>
+          <li class="sidebar-nav-item"><button type="button" class="sidebar-nav-link sidebar-logout-link" data-action="logout"><span class="sidebar-nav-icon">⏻</span>Logout</button></li>
         </nav>
       </aside>
 
@@ -45,6 +54,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/subscription-overview.js"></script>
     <script src="js/subscription.js"></script>
   </body>
 </html>

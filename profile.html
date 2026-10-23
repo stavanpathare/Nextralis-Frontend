@@ -194,6 +194,13 @@
         <div class="sidebar-header">
           <div class="sidebar-logo">Nextralis</div>
         </div>
+        <section class="subscription-overview" id="dashboard-subscription" aria-live="polite">
+          <div>
+            <strong>Your plan</strong>
+            <p>Loading subscription usage…</p>
+          </div>
+          <a class="section-link" href="subscription.html">Manage subscription</a>
+        </section>
         <nav class="sidebar-nav">
           <li class="sidebar-nav-item">
             <a href="dashboard.html" class="sidebar-nav-link">
@@ -227,7 +234,7 @@
           </li>
           <li class="sidebar-nav-item">
             <button type="button" class="sidebar-nav-link sidebar-logout-link" data-action="logout">
-              <span class="sidebar-nav-icon">↪</span>
+              <span class="sidebar-nav-icon">⏻</span>
               Logout
             </button>
           </li>
@@ -351,5 +358,6 @@
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
     <script src="js/profile.js"></script>
+    <script src="js/subscription-overview.js"></script>
   </body>
 </html>
