@@ -13,7 +13,6 @@ class Dashboard {
     if (!authManager.isAuthenticated()) {
       // Attempt token-based recovery before forcing redirect
       const token = api.getToken();
-      console.log('[dashboard] auth check failed; token from api:', token, 'localStorage token:', localStorage.getItem(CONFIG.STORAGE_KEYS.TOKEN), 'authManager.user:', authManager.getCurrentUser());
       if (token) {
         const valid = await authManager.verifyToken();
         if (!valid) {
