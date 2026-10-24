@@ -133,6 +133,10 @@
   color: #c4b5fd;
   background: rgba(139, 92, 246, .16);
 }
+:root[data-theme='dark'] .sidebar-logout-link {
+  background: #f60101;
+  color: var(--color-text-primary);
+}
 
 :root[data-theme='dark'] .navbar-landing {
   background: rgba(8, 11, 18, .94) !important;
@@ -493,6 +497,11 @@
   background: var(--color-bg-secondary);
   border-color: var(--color-border);
   color: var(--color-text-primary);
+}
+
+:root[data-theme='dark'] .subscription-overview strong,
+:root[data-theme='dark'] .subscription-overview .plan-name {
+  color: #fff;
 }
 
 :root[data-theme='dark'] .usage-item,

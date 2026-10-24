@@ -71,13 +71,14 @@ footer { color:#6b7280; background:transparent; padding:24px; margin-left:260px;
 .sidebar-logo::before { content:'N'; display:inline-grid; place-items:center; width:38px; height:38px; margin-right:0; border-radius:12px; background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color:#fff; font-size:1.5rem; vertical-align:middle; box-shadow:0 10px 24px rgba(79,70,229,.22); }
 .sidebar:not(.is-expanded) .sidebar-logo { font-size:0; gap:0; }
 .sidebar:not(.is-expanded) .theme-toggle { display:none; }
-.sidebar-nav { display:flex; flex-direction:column; gap:10px; }
+.sidebar-nav { display:flex; flex:1; flex-direction:column; gap:10px; }
 .sidebar-nav-item { margin:0; }
+.sidebar-nav-item.sidebar-logout-item { margin-top:auto; }
 .sidebar-nav-link { display:flex; align-items:center; justify-content:flex-start; gap:14px; min-height:52px; padding:0 14px; border-radius:14px; color:#1f2937; border:1px solid transparent; font-size:1.02rem; font-weight:500; }
 .sidebar-nav-link:hover,.sidebar-nav-link.active { color:#4338ca; background:rgba(91,76,242,.12); border-color:rgba(91,76,242,.06); padding-left:14px; }
 .sidebar:not(.is-expanded) .sidebar-nav-link { justify-content:center; padding:0; font-size:0; }
 .sidebar-nav-icon { font-size:1.15rem; width:18px; height:18px; }
-.sidebar-nav-link.sidebar-logout-link { width:100%; border:0; background:#fff5f5; color:#ef4444; cursor:pointer; font-family:inherit; font-size:.9rem; font-weight:600; text-align:left; margin-top:auto; }
+.sidebar-nav-link.sidebar-logout-link { width:100%; border:0; background:#fff5f5; color:#ef4444; cursor:pointer; font-family:inherit; font-size:.9rem; font-weight:600; text-align:left; }
 .sidebar-nav-link.sidebar-logout-link:hover { background:#fee2e2; color:#dc2626; }
 .subscription-overview { display:flex; flex-direction:column; gap:10px; background:linear-gradient(180deg, rgba(242,240,247,.96), rgba(239,236,255,.82)); border:1px solid rgba(91,76,242,.12); border-radius:18px; padding:14px; margin:0 0 18px; opacity:1; max-height:220px; }
 .sidebar:not(.is-expanded) .subscription-overview { opacity:0; max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; border-width:0; pointer-events:none; }

@@ -494,6 +494,13 @@ if (typeof document !== 'undefined') {
     }
   };
 
+  document.documentElement.addEventListener('mouseleave', () => {
+  if (isDesktop()) {
+    clearDesktopCollapse();
+    setDesktopExpanded(false);
+  }
+});
+
   const setDesktopExpanded = (expanded) => {
     sidebar.classList.toggle('is-expanded', expanded);
     syncDesktopOverlay(expanded);
@@ -575,9 +582,7 @@ if (typeof document !== 'undefined') {
   const scheduleDesktopCollapse = () => {
     clearDesktopCollapse();
     hoverTimer = setTimeout(() => {
-      const overlay = document.querySelector('.sidebar-backdrop');
-      const pointerIsOnOverlay = overlay && overlay.matches(':hover');
-      if (isDesktop() && !pointerIsOnOverlay && !sidebar.matches(':hover')) {
+      if (isDesktop() && !sidebar.matches(':hover')) {
         setDesktopExpanded(false);
       }
     }, 250);
@@ -611,12 +616,6 @@ if (typeof document !== 'undefined') {
 
   const overlay = document.querySelector('.sidebar-backdrop');
   if (overlay) {
-    overlay.addEventListener('pointerenter', () => {
-      if (isDesktop()) {
-        clearDesktopCollapse();
-        setDesktopExpanded(true);
-      }
-    });
     overlay.addEventListener('pointerleave', () => {
       if (isDesktop()) {
         scheduleDesktopCollapse();
