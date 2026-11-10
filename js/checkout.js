@@ -5,7 +5,11 @@ const buildRazorpayCheckoutOptions = (order, planName, handler, onDismiss) => ({
   name: 'Nextralis',
   description: `${planName} · ${order.durationDays} days`,
   order_id: order.orderId,
-  prefill: { name: order.customer.name, email: order.customer.email },
+  prefill: {
+    name: order.customer.name,
+    email: order.customer.email,
+    contact: order.customer.contact,
+  },
   theme: { color: '#4f46e5' },
   handler,
   modal: { ondismiss: onDismiss },
@@ -21,7 +25,7 @@ class CheckoutPage {
     this.planId = this.params.get('plan');
     this.duration = this.params.get('duration');
     this.summary = document.getElementById('checkout-summary');
-    this.customer = document.getElementById('checkout-customer');
+    this.billingForm = document.getElementById('checkout-billing-form');
     this.error = document.getElementById('checkout-error');
     this.originNote = document.getElementById('checkout-origin-note');
     this.button = document.getElementById('pay-button');
@@ -52,8 +56,12 @@ class CheckoutPage {
       }
       this.profile = profileResponse.data;
       this.render(price);
+      this.renderBillingForm();
       this.button.disabled = false;
-      this.button.addEventListener('click', () => this.startCheckout());
+      this.billingForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        this.startCheckout();
+      });
     } catch (error) {
       this.showError(error.message || 'Unable to prepare checkout.');
       this.summary.textContent = 'Checkout could not be prepared.';
@@ -79,11 +87,21 @@ class CheckoutPage {
     duration.textContent = 'One-time payment. Access begins after successful server verification.';
     this.summary.replaceChildren(title, amount, duration);
 
-    const name = document.createElement('p');
-    name.textContent = `Name: ${this.profile?.name || 'Not provided'}`;
-    const email = document.createElement('p');
-    email.textContent = `Email: ${this.profile?.email || 'Not provided'}`;
-    this.customer.replaceChildren(name, email);
+  }
+
+  renderBillingForm() {
+    this.billingForm.elements.name.value = this.profile?.name || '';
+    this.billingForm.elements.email.value = this.profile?.email || '';
+  }
+
+  getBillingDetails() {
+    return {
+      name: this.billingForm.elements.name.value.trim(),
+      email: this.billingForm.elements.email.value.trim(),
+      address: this.billingForm.elements.address.value.trim(),
+      pincode: this.billingForm.elements.pincode.value.trim(),
+      phone: this.billingForm.elements.phone.value.trim(),
+    };
   }
 
   showError(message) {
@@ -108,6 +126,7 @@ class CheckoutPage {
   }
 
   async startCheckout() {
+    if (!this.billingForm.reportValidity()) return;
     if (this.pendingPayment) {
       await this.verifyPendingPayment();
       return;
@@ -121,7 +140,7 @@ class CheckoutPage {
     this.button.textContent = 'Preparing secure payment…';
     let orderResponse;
     try {
-      orderResponse = await api.createPaymentOrder(this.planId, this.duration);
+      orderResponse = await api.createPaymentOrder(this.planId, this.duration, this.getBillingDetails());
     } catch (error) {
       const pendingOrder = error.response?.data?.pendingOrder;
       if (error.response?.data?.code === 'PAYMENT_ORDER_PENDING' && pendingOrder) {

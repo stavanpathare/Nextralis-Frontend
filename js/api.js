@@ -284,8 +284,8 @@ class APIClient {
     return this.get(CONFIG.ENDPOINTS.GET_SUBSCRIPTION);
   }
 
-  async createPaymentOrder(planId, billingDuration) {
-    return this.post(CONFIG.ENDPOINTS.CREATE_PAYMENT_ORDER, { planId, billingDuration });
+  async createPaymentOrder(planId, billingDuration, billingDetails) {
+    return this.post(CONFIG.ENDPOINTS.CREATE_PAYMENT_ORDER, { planId, billingDuration, billingDetails });
   }
 
   async verifyPayment(paymentData) {
@@ -294,6 +294,10 @@ class APIClient {
 
   async getPaymentStatus(orderId) {
     return this.get(CONFIG.ENDPOINTS.GET_PAYMENT_STATUS.replace(':orderId', encodeURIComponent(orderId)));
+  }
+
+  async submitContactQuery(data) {
+    return this.post(CONFIG.ENDPOINTS.SUBMIT_CONTACT_QUERY, data);
   }
 
   /* ============================================

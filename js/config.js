@@ -4,8 +4,8 @@
 
 const CONFIG = {
   // Backend API Base URL
-  // API_BASE_URL: 'http://localhost:5000/api',
-  API_BASE_URL: 'https://nextralis-backend.onrender.com/api',
+  API_BASE_URL: 'http://localhost:5000/api',
+  // API_BASE_URL: 'https://nextralis-backend.onrender.com/api',
 
   // API Endpoints
   ENDPOINTS: {
@@ -28,6 +28,7 @@ const CONFIG = {
     CREATE_PAYMENT_ORDER: '/subscription/orders',
     VERIFY_PAYMENT: '/subscription/verify',
     GET_PAYMENT_STATUS: '/subscription/payments/:orderId',
+    SUBMIT_CONTACT_QUERY: '/contact',
 
     // Resume
     UPLOAD_RESUME: '/resume/upload',
