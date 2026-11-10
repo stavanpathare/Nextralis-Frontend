@@ -16,6 +16,7 @@ const CONFIG = {
     REFRESH_TOKEN: '/auth/refresh',
     VERIFY_TOKEN: '/auth/verify',
     CHANGE_PASSWORD: '/auth/change-password',
+    SUBMIT_CONTACT_QUERY: '/contact',
 
     // User Profile
     GET_PROFILE: '/auth/profile',

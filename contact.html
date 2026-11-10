@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nextralis | Contact Us</title>
+  <link rel="icon" type="image/png" href="ICONS/checkout.png" />
+  <link rel="stylesheet" href="css/premium.css" />
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/theme.css" />
+  <style>
+    .contact-page { width: min(100% - 32px, 680px); margin: 42px auto; }
+    .contact-card { padding: clamp(22px, 5vw, 40px); background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: 20px; box-shadow: var(--shadow-md); }
+    .contact-card h1 { margin: 14px 0 8px; }
+    .contact-card > p { margin-bottom: 24px; line-height: 1.6; }
+    .contact-form { display: grid; gap: 18px; }
+    .contact-field { display: grid; gap: 7px; }
+    .contact-field label { color: var(--color-text-primary); font-size: .9rem; font-weight: 600; }
+    .contact-field input, .contact-field textarea { width: 100%; box-sizing: border-box; }
+    .contact-field textarea { min-height: 150px; resize: vertical; }
+    .contact-submit { justify-self: start; min-width: 160px; }
+    .contact-submit:disabled { cursor: wait; opacity: .7; }
+    .contact-toast { display: none; margin-top: 20px; padding: 14px 16px; border: 1px solid #a7f3d0; border-radius: 12px; background: #ecfdf5; color: #065f46; }
+    .contact-toast.is-visible { display: block; }
+    .contact-toast.is-error { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+    .contact-toast strong { display: block; margin-bottom: 4px; }
+    .contact-toast p { margin: 0; color: inherit; }
+    .contact-footer { display: flex; justify-content: center; gap: 18px; padding: 22px; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .contact-toast:not(.is-error) { border-color: #166534; background: #052e16; color: #bbf7d0; }
+    }
+    :root[data-theme="dark"] .contact-toast:not(.is-error) { border-color: #166534; background: #052e16; color: #bbf7d0; }
+  </style>
+</head>
+<body>
+  <main class="contact-page">
+    <section class="contact-card">
+      <a href="index.html">← Back to Nextralis</a>
+      <h1>Contact Us</h1>
+      <p>Send us your question or support request. Our team will review it and get back to you.</p>
+      <form class="contact-form" id="contact-form">
+        <div class="contact-field">
+          <label for="contact-name">Name</label>
+          <input id="contact-name" name="name" type="text" autocomplete="name" maxlength="120" required />
+        </div>
+        <div class="contact-field">
+          <label for="contact-email">Email</label>
+          <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required />
+        </div>
+        <div class="contact-field">
+          <label for="contact-phone">Phone number</label>
+          <input id="contact-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" pattern="(?:\+91[ -]?)?[6-9][0-9]{9}" maxlength="15" aria-describedby="contact-phone-hint" required />
+          <small id="contact-phone-hint">Enter a 10-digit Indian mobile number, optionally with +91.</small>
+        </div>
+        <div class="contact-field">
+          <label for="contact-query">How can we help?</label>
+          <textarea id="contact-query" name="query" minlength="10" maxlength="5000" required></textarea>
+        </div>
+        <button class="btn btn-primary contact-submit" id="contact-submit" type="submit">Send query</button>
+      </form>
+      <div class="contact-toast" id="contact-toast" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="contact-footer">
+    <a href="contact.html">Contact Us</a>
+    <a href="refund-policy.html">Refund Policy</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms-of-service.html">Terms of Service</a>
+  </footer>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      var button = document.getElementById('contact-submit');
+      var toast = document.getElementById('contact-toast');
+
+      function showToast(title, message, isError) {
+        var heading = document.createElement('strong');
+        heading.textContent = title;
+        var detail = document.createElement('p');
+        detail.textContent = message;
+        toast.replaceChildren(heading, detail);
+        toast.classList.toggle('is-error', isError);
+        toast.classList.add('is-visible');
+      }
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        button.disabled = true;
+        button.textContent = 'Sending…';
+        toast.classList.remove('is-visible');
+        var payload = {
+          name: form.elements.name.value.trim(),
+          email: form.elements.email.value.trim(),
+          phone: form.elements.phone.value.trim(),
+          query: form.elements.query.value.trim(),
+        };
+
+        var result = await api.submitContactQuery(payload);
+        if (result.error) {
+          showToast('We could not send your query', result.error, true);
+          button.disabled = false;
+          button.textContent = 'Send query';
+          return;
+        }
+
+        form.reset();
+        showToast('Your query was sent successfully', 'It may take up to 7 working days to resolve your problem.', false);
+        button.disabled = false;
+        button.textContent = 'Send query';
+      });
+    })();
+  </script>
+</body>
+</html>

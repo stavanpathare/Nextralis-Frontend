@@ -308,6 +308,11 @@ class APIClient {
     });
   }
 
+  async submitContactQuery(data) {
+    return this.post(CONFIG.ENDPOINTS.SUBMIT_CONTACT_QUERY, data);
+  }
+
+
   async endInterview(interviewId) {
     return this.post(CONFIG.ENDPOINTS.END_INTERVIEW, { interviewId });
   }
