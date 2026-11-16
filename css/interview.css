@@ -294,6 +294,8 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
+  max-width: 360px;
+  justify-self: end;
 }
 
 .microphone-widget {
@@ -391,6 +393,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  max-height: 50vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .result-item {
@@ -418,6 +423,7 @@
   }
   .interview-sidebar {
     order: -1;
+    justify-self: center;
   }
 }
 
@@ -639,6 +645,10 @@
     max-height: 300px;
   }
 
+  .previous-list {
+    max-height: 160px;
+  }
+
   .setup-form,
   .setup-info {
     padding: var(--spacing-lg);
@@ -798,6 +808,10 @@
     width: 100%;
     padding: var(--spacing-md);
     max-height: 250px;
+  }
+
+  .previous-list {
+    max-height: 120px;
   }
 
   .previous-questions-title {
