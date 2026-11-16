@@ -226,12 +226,14 @@ class AuthManager {
   /**
    * Logout user
    */
-  async logout() {
+  async logout({ callServer = true } = {}) {
     console.log('[auth] logout: clearing auth state');
-    try {
-      await api.logout();
-    } catch (e) {
-      console.warn('[auth] logout: server logout failed', e);
+     if (callServer) {
+      try {
+        await api.logout();
+      } catch (e) {
+        console.warn('[auth] logout: server logout failed', e);
+      }
     }
     api.setToken(null);
     this.user = null;
@@ -239,6 +241,9 @@ class AuthManager {
     try {
       localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
       localStorage.removeItem(CONFIG.STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.LAST_ACTIVITY);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.RESUME_DATA);
     } catch (e) {
       console.error('[auth] logout error clearing localStorage', e);
     }
