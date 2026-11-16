@@ -78,6 +78,12 @@ class APIClient {
       // Token expired or unauthorized
       this.setToken(null);
       localStorage.removeItem(CONFIG.STORAGE_KEYS.USER);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.LAST_ACTIVITY);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.INTERVIEW_SESSION);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.RESUME_DATA);
+      if (typeof window !== 'undefined' && window.sessionManager) {
+        window.sessionManager.handleUnauthorized();
+      }
       if (!window.location.pathname.endsWith('login.html')) {
         window.location.href = 'login.html';
       }
@@ -236,8 +242,13 @@ class APIClient {
   }
 
   async logout() {
+    const response = await this.post(CONFIG.ENDPOINTS.LOGOUT);
     this.setToken(null);
-    return this.post(CONFIG.ENDPOINTS.LOGOUT);
+    return response;
+  }
+
+  async recordActivity() {
+    return this.post(CONFIG.ENDPOINTS.RECORD_ACTIVITY);
   }
 
   async verifyToken() {
